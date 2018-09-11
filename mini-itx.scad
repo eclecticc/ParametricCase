@@ -1,5 +1,6 @@
+pcb_thickness = 1.57;
 // Base PCB dimensions
-miniitx = [170, 170, 1.57];
+miniitx = [170, 170, pcb_thickness];
 
 // Motherboard mounting hold diameter and offsets (relative to hole c)
 miniitx_hole = 3.96;
@@ -15,6 +16,9 @@ miniitx_bottom_keepout = 0.25 * 25.4;
 // AM4 Socket specs
 am4_holes = [80, 95, 54, 90]; // Center not measured
 am4_socket = [40, 40, 7.35]; // Not measured
+
+// Offset from origin corner of motherboard to the base of the PCI-e card
+pci_e_offset = [46.94+10.16, 47.29-45.72+6.35, 114.55-111.15];
 
 module motherboard(show_keepouts, socket_holes, socket) {
     area_a_keepout = [27, 15, 170-27-30, 170-15, 57];
@@ -52,7 +56,13 @@ module motherboard(show_keepouts, socket_holes, socket) {
             }
         }
     }
-        
+    
+    // PCI-e slot
+    color("DarkSlateGray", 1.0) {
+        translate([pci_e_offset[0]-14.5, pci_e_offset[1]-7.5/2, miniitx[2]]) cube([89.0, 7.5, 11.25]);
+    }
+    
+    // Keepouts for visualization purposes
     color("GreenYellow", 0.25) {
         if (show_keepouts == true) {
             translate([0, 0, -miniitx_bottom_keepout]) cube([miniitx[0], miniitx[1], miniitx_bottom_keepout]);
@@ -63,7 +73,7 @@ module motherboard(show_keepouts, socket_holes, socket) {
                 }
             }
         }
-    } 
+    }
 }
 
 module fan(size, thickness, blades) { 
@@ -134,7 +144,7 @@ pci_bracket_thickness = 0.86;
 pci_bracket_hole = 4.42;
 
 module pci_bracket() {
-    color("DarkGray", 1.0) {
+    color("DarkGray", 1.0) rotate([0, 0, 180]) {
         // Using the center of the screw hole where it intersects the case as datum
         hole_overhang = 21.59-18.42;
         difference() {
@@ -158,14 +168,41 @@ module pci_bracket() {
                     cube([pci_bracket_thickness+extra, 2.54+extra, 3.94+extra]);
                     rotate([-45, 0, 0]) cube([pci_bracket_thickness+extra, 2.54+extra, 3.94+extra]);
                 }
+                
+                translate([-extra/2, 4.11, 0]) rotate([135, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
+                translate([-extra/2, 18.42-4.11, 0]) rotate([-45, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
             }
+        }
+        
+        translate([-5.08-pci_bracket_thickness, 4.11, -120.02]) {
+            cube([pci_bracket_thickness, 14.30-4.11, 120.02+pci_bracket_thickness]);
         }
     }
 }
 
-module gpu() {
-    color("DimGrey", 1.0) {
-        cube(zotac);
+pci_e_front_edge = -57.15;
+pci_e_cutout_height = 8.25+(111.15-106.65);
+
+module dual_gpu(length) {
+    // Using the bottom center of the notch as the datum
+    color("Green", 1.0) {
+        difference() {
+            translate([pci_e_front_edge, -pcb_thickness/2, 0]) cube([length, pcb_thickness, 111.15]);
+            translate([pci_e_front_edge-extra, -pcb_thickness/2-extra/2, 0-extra]) cube([-pci_e_front_edge+extra-12.15, pcb_thickness+extra, pci_e_cutout_height]);
+            translate([72.15, -pcb_thickness/2-extra/2, 0-extra]) cube([length-72.15+extra, pcb_thickness+extra, pci_e_cutout_height]);
+        }
+    }
+    
+    translate([-64.13, 2.84-pcb_thickness, 100.36]) {
+        pci_bracket();
+        translate([0, -(47.29-26.97), 0]) pci_bracket();
+    }
+}
+
+module zotac_1080_mini() {
+    dual_gpu(172.48);
+    color("DimGray", 1.0) {
+        translate([pci_e_front_edge, -(40.41-3), pci_e_cutout_height]) cube([211, 40.41, 110]);
     }
 }
 
@@ -212,8 +249,8 @@ module back_to_back() {
         rotate([-90, 0, 0]) flexatx(180);
     }
 
-    translate([0, 0, -miniitx_bottom_keepout-wall]) {
-        rotate([-90, 0, 0]) gpu();
+    translate([0, 0, miniitx[2]]) {
+        rotate([-90, 0, 0]) dual_gpu();
     }
 }
 
@@ -226,11 +263,9 @@ module traditional() {
         flexatx(180);
     }
 
-    translate([0, 0, 0]) {
-        gpu();
+    translate([pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]]) {
+        zotac_1080_mini();
     }
 }
 
-//traditional();
-
-pci_bracket();
+traditional();
