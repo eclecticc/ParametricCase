@@ -76,6 +76,27 @@ module motherboard(show_keepouts, socket_holes, socket) {
     }
 }
 
+module motherboard_standoff() {
+    // Uxcell M3 threaded inserts from Amazon
+    insert_r = 5.3/2;
+    insert_h = 5.0;
+    
+    difference() {
+        cylinder(r = (0.4*25.4)/2, h = miniitx_bottom_keepout);
+        translate([0, 0, miniitx_bottom_keepout-insert_h]) cylinder(r = insert_r - 0.1, h = insert_h+extra);
+    }
+}
+
+module motherboard_standoffs() {
+    // Mounting holes for the motherboard
+    translate([miniitx_hole_c[0], miniitx_hole_c[1], 0]) {
+        motherboard_standoff();
+        for (hole = [miniitx_hole_f, miniitx_hole_h, miniitx_hole_j]) {
+            translate([hole[0], hole[1], 0]) motherboard_standoff();
+        }
+    }
+}
+
 module fan(size, thickness, blades) { 
     $fn = 50;
     
@@ -237,6 +258,12 @@ module noctua_nh_l12s() {
     }
 }
 
+module noctua_nh_u9s() {
+    color("Gainsboro") {
+        translate([-47.5, -47.5, 0]) cube([95, 95, 125]);
+    }
+}
+
 wall = 3;
 cpu_fan_clearance = 10;
 
@@ -249,13 +276,14 @@ module back_to_back() {
         rotate([-90, 0, 0]) flexatx(180);
     }
 
-    translate([0, 0, miniitx[2]]) {
-        rotate([-90, 0, 0]) dual_gpu();
+    translate([pci_e_offset[0], pci_e_offset[1]+100, -40]) {
+        rotate([90, 0, 0]) zotac_1080_mini();
     }
 }
 
 module traditional() {
     motherboard(false, am4_holes, am4_socket);
+    translate([0, 0, -miniitx_bottom_keepout]) motherboard_standoffs();
     
     translate([am4_holes[0], am4_holes[1], am4_socket[2]+miniitx[2]]) noctua_nh_l12s();
 
@@ -268,4 +296,19 @@ module traditional() {
     }
 }
 
+module traditional_tower_cooler() {
+    motherboard(false, am4_holes, am4_socket);
+    
+    translate([am4_holes[0], am4_holes[1], am4_socket[2]+miniitx[2]]) noctua_nh_u9s();
+
+    translate([0, miniitx[1]-flexatx[1], flexatx[0]+miniitx[2]+45]) rotate([-90, 0, 0]) {
+        flexatx(180);
+    }
+
+    translate([pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]]) {
+        zotac_1080_mini();
+    }
+}
+
+//back_to_back();
 traditional();
