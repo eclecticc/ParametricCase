@@ -88,6 +88,8 @@ module motherboard_standoff() {
 }
 
 module motherboard_standoffs() {
+    $fn = 50;
+    
     // Mounting holes for the motherboard
     translate([miniitx_hole_c[0], miniitx_hole_c[1], 0]) {
         motherboard_standoff();
@@ -97,15 +99,27 @@ module motherboard_standoffs() {
     }
 }
 
-module fan(size, thickness, blades) { 
+motherboard_back_edge = miniitx_hole_c[0]-12.27;
+motherboard_back_panel_overhang = 158.75+7.52+6.35-miniitx[1];
+motherboard_back_panel_lip = 2.54;
+
+module motherboard_back_panel() {
+    // Cut-out for the back panel i/o
+    translate([-extra/2+motherboard_back_edge-wall, miniitx_hole_c[1]+7.52, -2.24]) {
+        cube([extra/2+wall+motherboard_back_edge+39, 158.75, 44.45]);
+        // Thin a 2.54mm area around the i/o down to a typical sheet metal thickness
+        translate([0, -motherboard_back_panel_lip, -motherboard_back_panel_lip]) cube([extra/2+wall-1.2, 158.75+motherboard_back_panel_lip*2, 44.45+motherboard_back_panel_lip*2]);
+    }
+}   
+
+module fan(size, thickness, blades) {
+    // Center at base of exhaust side is datum
     $fn = 50;
-    
     fan_wall = 1;
     
     color("DarkSlateGray", 1.0) {
         difference() {
             translate([-size/2, -size/2, 0]) {
-                
                     cube([size, size, thickness]);
                 }
             translate([0, 0, -extra/2]) cylinder(r = size/2-fan_wall, h = thickness + extra);
@@ -128,6 +142,7 @@ flexatx_hole = 3.3;
 flexatx_hole_a = [81.5-75.9, 4.1];
 flexatx_hole_b = [81.5-75.9, 4.1+31.5];
 flexatx_hole_c = [81.5-15.2, 36.5];
+iec = [3, 24, 31];
 
 module flexatx(length) {
     color("Silver", 1.0) {
@@ -149,7 +164,6 @@ module flexatx(length) {
     
     // IEC C14 placeholder
     color("DarkSlateGray", 1.0) {
-        iec = [3, 24, 31];
         translate([-iec[0], flexatx[0]-iec[1]-4.4, 2]) {
             difference() {
                 cube(iec);
@@ -159,19 +173,43 @@ module flexatx(length) {
     }
 }
 
+module flexatx_cutout(fan) {
+    cutout_extra = 0.5;
+    
+    // Mounting holes
+    for (hole = [flexatx_hole_a, flexatx_hole_b, flexatx_hole_c]) {
+        translate([-15, hole[0], hole[1]]) {
+            rotate([0, 90, 0]) cylinder(r = flexatx_hole/2, h = 30);
+        }
+    }
+    
+    // IEC power plug hole
+    translate([-15, flexatx[0]-iec[1]-4.4-cutout_extra, 2-cutout_extra]) {
+        cube([30, iec[1]+cutout_extra*2, iec[2]+cutout_extra*2]);
+    }
+    
+    // Fan hole
+    if (fan == true) {
+        translate([-15, flexatx[0]-52.4, flexatx[1]/2]) rotate([0, 90, 0]) cylinder(r = 20, h = 30);
+    }
+}
+
 zotac = [211, 40.41, 125];
 
 pci_bracket_thickness = 0.86;
 pci_bracket_hole = 4.42;
+pci_bracket_width = 18.42;
+pci_bracket_tab_offset = 4.11;
+pci_bracket_tab_width = 14.30-pci_bracket_tab_offset;
 
 module pci_bracket() {
     color("DarkGray", 1.0) rotate([0, 0, 180]) {
         // Using the center of the screw hole where it intersects the case as datum
-        hole_overhang = 21.59-18.42;
+        hole_overhang = 21.59-pci_bracket_width;
         difference() {
             translate([-5.08, -hole_overhang, 0]) {
-                cube([11.43, 18.42, pci_bracket_thickness]);
-                translate([-pci_bracket_thickness, 0, -4.56]) cube([pci_bracket_thickness, 18.42, 4.56+pci_bracket_thickness]);
+                cube([11.43, pci_bracket_width, pci_bracket_thickness]);
+                translate([-pci_bracket_thickness, 0, -4.56]) cube([pci_bracket_thickness, pci_bracket_width, 4.56+pci_bracket_thickness]);
             }
             translate([0, 0, -extra/2]) {
                 cylinder(r = pci_bracket_hole/2, h = pci_bracket_thickness+extra);
@@ -184,25 +222,41 @@ module pci_bracket() {
         
         translate([-5.08-pci_bracket_thickness, 0, -112.75]) {
             difference() {
-                cube([pci_bracket_thickness, 18.42, 112.75+pci_bracket_thickness]);
-                translate([-extra/2, 18.42-2.54, 112.75-3.94+pci_bracket_thickness]) {
+                cube([pci_bracket_thickness, pci_bracket_width, 112.75+pci_bracket_thickness]);
+                translate([-extra/2, pci_bracket_width-2.54, 112.75-3.94+pci_bracket_thickness]) {
                     cube([pci_bracket_thickness+extra, 2.54+extra, 3.94+extra]);
                     rotate([-45, 0, 0]) cube([pci_bracket_thickness+extra, 2.54+extra, 3.94+extra]);
                 }
                 
-                translate([-extra/2, 4.11, 0]) rotate([135, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
-                translate([-extra/2, 18.42-4.11, 0]) rotate([-45, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
+                translate([-extra/2, pci_bracket_tab_offset, 0]) rotate([135, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
+                translate([-extra/2, pci_bracket_width-pci_bracket_tab_offset, 0]) rotate([-45, 0, 0]) cube([pci_bracket_thickness+extra, 10, 10]);
             }
         }
         
-        translate([-5.08-pci_bracket_thickness, 4.11, -120.02]) {
-            cube([pci_bracket_thickness, 14.30-4.11, 120.02+pci_bracket_thickness]);
+        translate([-5.08-pci_bracket_thickness, pci_bracket_tab_offset, -120.02]) {
+            cube([pci_bracket_thickness, pci_bracket_tab_width, 120.02+pci_bracket_thickness]);
         }
+    }
+}
+
+module pci_bracket_cutout() {
+    io_cutout = [12.06, 89.90];
+    slot_extra = 0.1;
+    
+    minkowski() {
+        pci_bracket();
+        cube([slot_extra*2, slot_extra*2, slot_extra*2], true);
+    }
+
+    // I/O Cutout
+    translate([-15, -2.84-0.35-io_cutout[0], -10.16-io_cutout[1]]) {
+        cube([30, io_cutout[0], io_cutout[1]]);
     }
 }
 
 pci_e_front_edge = -57.15;
 pci_e_cutout_height = 8.25+(111.15-106.65);
+pci_e_spacing = 47.29-26.97;
 
 module dual_gpu(length) {
     // Using the bottom center of the notch as the datum
@@ -216,14 +270,23 @@ module dual_gpu(length) {
     
     translate([-64.13, 2.84-pcb_thickness, 100.36]) {
         pci_bracket();
-        translate([0, -(47.29-26.97), 0]) pci_bracket();
+        translate([0, -pci_e_spacing, 0]) pci_bracket();
     }
 }
+
+module dual_gpu_cutout() {
+    translate([-64.13, 2.84-pcb_thickness, 100.36]) {
+        pci_bracket_cutout();
+        translate([0, -pci_e_spacing, 0]) pci_bracket_cutout();
+    }
+}
+
+zotac_1080_mini_length = 211; // TODO: Needs measurement
 
 module zotac_1080_mini() {
     dual_gpu(172.48);
     color("DimGray", 1.0) {
-        translate([pci_e_front_edge, -(40.41-3), pci_e_cutout_height]) cube([211, 40.41, 110]);
+        translate([pci_e_front_edge, -(40.41-3), pci_e_cutout_height]) cube([zotac_1080_mini_length, 40.41, 110]);
     }
 }
 
@@ -281,18 +344,102 @@ module back_to_back() {
     }
 }
 
-module traditional() {
-    motherboard(false, am4_holes, am4_socket);
-    translate([0, 0, -miniitx_bottom_keepout]) motherboard_standoffs();
+module traditional(show_internals) {
+    heatsink_height = noctua_nh_l12s_size[2];
+    psu_location = [motherboard_back_edge, miniitx[1]-flexatx[0], heatsink_height+cpu_fan_clearance+am4_socket[2]+miniitx[2]];
+    gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
     
-    translate([am4_holes[0], am4_holes[1], am4_socket[2]+miniitx[2]]) noctua_nh_l12s();
+    case_origin = [motherboard_back_edge-wall, -pci_e_spacing*1.5, -miniitx_bottom_keepout-wall];
+    case_size = [zotac_1080_mini_length+wall*3, miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, heatsink_height+cpu_fan_clearance+am4_socket[2]+miniitx[2]+flexatx[1]-case_origin[2]+wall];
+    
+    // Calculate the case size in liters
+    // TODO: It might be interesting to "engrave" the volume onto the case
+    case_volume = case_size[0]*case_size[1]*case_size[2]/1000000.0;
+    echo("Case dimensions X:", case_size[0], " Y:", case_size[1], " Z:", case_size[2], " L:", case_volume);
+    
+    // Using the bottom corner of the motherboard near the GPU as the origin
+    if (show_internals == true) {
+        motherboard(false, am4_holes, am4_socket);
+        
+        translate([am4_holes[0], am4_holes[1], am4_socket[2]+miniitx[2]]) noctua_nh_l12s();
 
-    translate([0, miniitx[1]-flexatx[0], noctua_nh_l12s_size[2]+cpu_fan_clearance+am4_socket[2]+miniitx[2]]) {
-        flexatx(180);
+        translate(psu_location) {
+            flexatx(180);
+        }
+
+        translate(gpu_location) {
+            zotac_1080_mini();
+        }
+        
+        translate(case_origin)  {
+            case_fan_size = 92;
+            case_fan_thickness = 25;
+            translate([case_size[0]-wall-case_fan_thickness, case_size[1]/2, case_fan_size/2+wall*2]) {
+                rotate([0, 90, 0]) fan(case_fan_size, case_fan_thickness, 10);
+            }
+        }
+        
+        translate(case_origin)  {
+            case_exhaust_fan_size = 80;
+            case_exhaust_fan_thickness = 10.8;
+            translate([wall, wall+40+case_exhaust_fan_size/2, case_exhaust_fan_size+20]) {
+                rotate([0, 90, 0]) fan(case_exhaust_fan_size, case_exhaust_fan_thickness, 10);
+            }
+        }
     }
-
-    translate([pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]]) {
-        zotac_1080_mini();
+    
+    // The actual case
+    color("WhiteSmoke", 0.75) {
+        // Motherboard standoffs taking threaded inserts
+        translate([0, 0, -miniitx_bottom_keepout]) {
+            motherboard_standoffs();  
+        }
+        
+        difference() {
+            translate(case_origin) {
+                 // Back wall
+                cube([wall, case_size[1], case_size[2]]);
+                
+                // Bottom wall
+                cube([case_size[0], case_size[1], wall]);
+                
+                // Right wall
+                // TODO: PSU support
+                translate([0, case_size[1]-wall, 0]) cube([case_size[0], wall, case_size[2]]);
+                
+                // Left wall
+                cube([case_size[0], wall, case_size[2]]);
+                
+                // Top wall
+                translate([0, 0, case_size[2]-wall]) cube([case_size[0], case_size[1], wall]);
+                
+                // Front wall
+                translate([case_size[0]-wall, 0, 0]) cube([wall, case_size[1], case_size[2]]);
+            }
+            
+            translate(case_origin) {
+                translate([10, 10, case_size[2]-wall/2]) {
+                    linear_extrude(wall) {
+                        text(str(case_volume), font = "Helvetica:style=Normal", size = 40);
+                    }
+                }
+            }
+            
+            // TODO: back wall ventilation
+            // TODO: front fan ventilation
+            
+            motherboard_back_panel();
+            
+            translate(psu_location) {
+                flexatx_cutout(true);
+            }
+            
+            translate(gpu_location) {
+                // TODO: front exhaust cutout
+                // TODO: side fan cutout
+                dual_gpu_cutout();
+            }
+        }
     }
 }
 
@@ -311,4 +458,4 @@ module traditional_tower_cooler() {
 }
 
 //back_to_back();
-traditional();
+traditional(true);
