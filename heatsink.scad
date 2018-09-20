@@ -15,7 +15,7 @@ module heatsink(size, base, fins) {
     }
 }
 
-aio_pump_size = [50, 50, 50]; // TODO: Use the actual Corsair H60 size
+aio_pump_size = [66, 66, 30];
 
 // A generic placeholder for an AIO cooling system pump
 module aio_pump() {

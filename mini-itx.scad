@@ -81,23 +81,32 @@ module traditional(show_internals, heatsink_type, psu_type) {
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
-    
     case_origin = [motherboard_back_edge-wall, -pci_e_spacing*1.5, -miniitx_bottom_keepout-wall];
-    case_size = [zotac_1080_mini_length+wall*3, miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, heatsink_height+cpu_fan_clearance+am4_socket[2]+miniitx[2]+flexatx_size[2]-case_origin[2]+wall];
     
-    psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]];
+    case_fan_size = 92;
+    case_fan_thickness = 25;
+    case_exhaust_fan_size = 80;
+    case_exhaust_fan_thickness = 15;
+    
+    // Figure out the stacked heights of the tallest components to use for case height
+    psu_heatsink_stack = -case_origin[2]+wall+miniitx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
+    gpu_stack = -case_origin[2]+wall+pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1];
+    
+    // Figure out the stacked lengths of the longest components to use for case length
+    miniitx_cooling_length = -motherboard_back_edge+wall*3+miniitx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
+    gpu_length = zotac_1080_mini_length+wall*3; // Note the extra wall length for assembly margin
+    
+    case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
+    
+    psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
+    case_fan_location = [case_size[0]-wall-case_fan_thickness, case_size[1]/2, case_fan_size/2+wall*2];
+    case_exhaust_fan_location = [wall, wall+40+case_exhaust_fan_size/2, case_exhaust_fan_size+20];
     
     // Calculate the case size in liters
     case_volume = case_size[0]*case_size[1]*case_size[2]/1000000.0;
     echo("Case dimensions X:", case_size[0], " Y:", case_size[1], " Z:", case_size[2], " L:", case_volume);
     
     corsair_h60_location = [case_size[0]-wall-corsair_h60_size[0], case_size[1]-wall*2-corsair_h60_size[1], case_size[2]-wall*2-corsair_h60_size[2]];
-    case_fan_size = 92;
-    case_fan_thickness = 25;
-    case_fan_location = [case_size[0]-wall-case_fan_thickness, case_size[1]/2, case_fan_size/2+wall*2];
-    case_exhaust_fan_size = 80;
-    case_exhaust_fan_thickness = 15;
-    case_exhaust_fan_location = [wall, wall+40+case_exhaust_fan_size/2, case_exhaust_fan_size+20];
     
     // Using the bottom corner of the motherboard near the GPU as the origin
     if (show_internals == true) {
@@ -212,7 +221,7 @@ module traditional(show_internals, heatsink_type, psu_type) {
                 }
             } else {
                 translate(psu_location) {
-                    flexatx_cutout();
+                    flexatx_cutout(true);
                 }
                 
                 translate(case_origin) translate([case_exhaust_fan_location[0]-wall, case_exhaust_fan_location[1], case_exhaust_fan_location[2]]) {
@@ -244,3 +253,5 @@ module traditional_tower_cooler() {
 }
 
 traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
+//traditional(show_internals = true, heatsink_type = "aio", psu_type = "sfx");
+

@@ -6,7 +6,7 @@ module vent_rectangular(size, pitch, wall) {
     // TODO: Taper the holes to reduce turbulance
     for (x = [-size[0]/2:fixed_pitch:size[0]/2-fixed_pitch]) {
         for (y = [-size[1]/2:fixed_pitch:size[1]/2-fixed_pitch]) {
-            translate([x+wall/2, y+wall/2, -15]) cube([fixed_pitch-wall, fixed_pitch-wall, 30]);
+            translate([x+wall/2, y+wall/2, -30]) cube([fixed_pitch-wall, fixed_pitch-wall, 60]);
         }
     }
 }
