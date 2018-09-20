@@ -15,6 +15,15 @@ module heatsink(size, base, fins) {
     }
 }
 
+aio_pump_size = [50, 50, 50]; // TODO: Use the actual Corsair H60 size
+
+// A generic placeholder for an AIO cooling system pump
+module aio_pump() {
+    color("DarkSlateGray", 1.0) {
+        translate([-aio_pump_size[0]/2, -aio_pump_size[1]/2, 0]) cube(aio_pump_size);
+    }
+}
+
 cryorig_c7_size = [97, 97, 47+15];
 
 module cryorig_c7() {
@@ -32,12 +41,13 @@ module noctua_nh_l12s() {
     }
 }
 
+noctua_nh_u9s_size = [95, 95, 125];
+
 module noctua_nh_u9s() {
     color("Gainsboro") {
-        translate([-47.5, -47.5, 0]) cube([95, 95, 125]);
+        translate([-noctua_nh_u9s_size[0]/2, -noctua_nh_u9s_size[1]/2, 0]) cube(noctua_nh_u9s_size);
     }
 }
-
 
 // Dimensions including stock fan
 corsair_h60_size = [27+25, 152, 120];
@@ -62,6 +72,33 @@ module corsair_h60() {
     
     translate([0, corsair_h60_size[1]/2-corsair_h60_fan_offset, corsair_h60_fan[0]/2]) rotate([0, 90, 0]) fan(corsair_h60_fan[0], fan_thickness, 7);
 }
+
+// Build the heatsink from the name of it
+module heatsink_type(type) {
+    if (type == "cryorig_c7") {
+        cryorig_c7();
+    } else if (type == "noctua_nh_l12s") {
+        noctua_nh_l12s();
+    } else if (type == "noctua_nh_u9s") {
+        noctua_nh_u9s();
+    } else if (type == "aio") {
+        aio_pump();
+    } else {
+        echo("Unknown heatsink ", type);
+    }
+}
+
+_heatsinks=[ 
+        ["cryorig_c7", cryorig_c7_size[2]], 
+        ["noctua_nh_l12s", noctua_nh_l12s_size[2]],
+        ["noctua_nh_u9s", noctua_nh_u9s_size[2]],
+        ["aio", aio_pump_size[2]]
+        ];
+
+// Return the height of the heatsink from the name of it
+function heatsink_height(heatsink) = _heatsinks[search([heatsink], _heatsinks, 1, 0)[0]][1];
+
+//heatsink_type("noctua_nh_l12s");
 
 //cryorig_c7();
 //noctua_nh_l12s();
