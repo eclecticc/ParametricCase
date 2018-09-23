@@ -51,6 +51,7 @@ module sfx() {
 sfx_l_size = [130, 125, 63.5];
 
 module sfx_l() {
+    $fn = 20;
     fan_size = 120;
     
     color("Silver", 1.0) {
@@ -82,6 +83,8 @@ module sfx_l() {
 }
 
 module sfx_cutout() {
+    $fn = 20;
+    
     // Cut out the standard mounting holes
     for (y = sfx_holes[0]) {
         for (z = sfx_holes[1]) {

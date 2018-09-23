@@ -81,15 +81,15 @@ module traditional(show_internals, heatsink_type, psu_type) {
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
-    case_origin = [motherboard_back_edge-wall, -pci_e_spacing*1.5, -miniitx_bottom_keepout-wall];
+    case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
     
-    case_fan_size = 92;
+    case_fan_size = 120;
     case_fan_thickness = 25;
     case_exhaust_fan_size = 80;
     case_exhaust_fan_thickness = 15;
     
     // Figure out the stacked heights of the tallest components to use for case height
-    psu_heatsink_stack = -case_origin[2]+wall+miniitx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
+    psu_heatsink_stack = -case_origin[2]+miniitx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
     gpu_stack = -case_origin[2]+wall+pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1];
     
     // Figure out the stacked lengths of the longest components to use for case length
@@ -99,7 +99,7 @@ module traditional(show_internals, heatsink_type, psu_type) {
     case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
     
     psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
-    case_fan_location = [case_size[0]-wall-case_fan_thickness, case_size[1]/2, case_fan_size/2+wall*2];
+    case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
     case_exhaust_fan_location = [wall, wall+40+case_exhaust_fan_size/2, case_exhaust_fan_size+20];
     
     // Calculate the case size in liters
@@ -216,7 +216,7 @@ module traditional(show_internals, heatsink_type, psu_type) {
                 
                 // Put in a vent on the back wall to improve airflow
                 back_panel_vent = [case_size[2]-motherboard_back_panel_size[1]-wall*2, case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
-                translate(psu_location) translate([0, -back_panel_vent[1]/2+wall, sfx_size[2]-back_panel_vent[0]/2-wall]) {
+                translate(psu_location) translate([0, -back_panel_vent[1]/2, sfx_size[2]-back_panel_vent[0]/2-wall]) {
                     rotate([0, 90, 0]) vent_rectangular(back_panel_vent, 10, 2.0);
                 }
             } else {
@@ -252,6 +252,6 @@ module traditional_tower_cooler() {
     }
 }
 
-traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
-//traditional(show_internals = true, heatsink_type = "aio", psu_type = "sfx");
+//traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
+traditional(show_internals = true, heatsink_type = "aio", psu_type = "sfx");
 
