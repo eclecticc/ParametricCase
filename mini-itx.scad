@@ -53,12 +53,17 @@ module psu_corner_ledge() {
 // The tab that the pci bracket screws into
 module pci_bracket_holder() {
     $fn = 20;
+    tab_depth = 11.43;
     
     bottom_wall = 1.0;
     
     translate(pci_e_to_bracket) {
         difference() {
-            translate([pci_bracket_back_edge, -pci_e_spacing+pci_bracket_right_edge-pci_bracket_slot_extra, -insert_h-bottom_wall]) cube([11.43, pci_e_spacing+pci_bracket_total_width+pci_bracket_slot_extra*2-2.54, insert_h+bottom_wall]);
+            // The body of the tab
+            translate([pci_bracket_back_edge, -pci_e_spacing+pci_bracket_right_edge-pci_bracket_slot_extra, -tab_depth]) cube([tab_depth, pci_e_spacing+pci_bracket_total_width+pci_bracket_slot_extra*2-2.54, tab_depth]);
+            // Chop it at 45 degrees to make it printable
+            translate([pci_bracket_back_edge+tab_depth, -pci_e_spacing+pci_bracket_right_edge-pci_bracket_slot_extra-extra/2, -tab_depth]) rotate([0, -45-90, 0]) cube([tab_depth*2, pci_e_spacing+pci_bracket_total_width+pci_bracket_slot_extra*2-2.54+extra, tab_depth]);
+            // Cut out the holes for the threaded insert and the bolt
             translate([0, 0, -insert_h]) {
                 cylinder(r = insert_r - 0.1, h = insert_h+extra);
                 translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
@@ -69,6 +74,13 @@ module pci_bracket_holder() {
             }
         }
     }
+}
+
+module top_lid(size) {
+    cube([size[0], size[1], wall]);
+    translate([0, 0, wall/2]) rotate([45, 0, 0]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
+    translate([0, size[1], wall/2]) rotate([45, 0, 0]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
+    translate([size[0], 0, wall/2]) rotate([45, 0, 90]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
 }
 
 module back_to_back() {
@@ -85,7 +97,7 @@ module back_to_back() {
     }
 }
 
-module traditional(show_internals, heatsink_type, psu_type) {
+module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type) {
     // Airflow clearance for CPU fan
     cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
@@ -158,8 +170,15 @@ module traditional(show_internals, heatsink_type, psu_type) {
         }
     }
     
+    // Make the lid separately so it can be printed on its own
+    if (show_lid == true) color("WhiteSmoke", 0.5) {
+        translate(case_origin) {
+            translate([0, wall, case_size[2]-wall]) top_lid([case_size[0]-wall, case_size[1]-wall*2]);
+        }
+    }
+    
     // The actual case
-    color("WhiteSmoke", 0.5) {
+    if (show_body == true) color("WhiteSmoke", 0.5) {
         // Motherboard standoffs taking threaded inserts
         translate([0, 0, -miniitx_bottom_keepout]) {
             motherboard_standoffs_miniitx();  
@@ -177,10 +196,15 @@ module traditional(show_internals, heatsink_type, psu_type) {
         }
         
         difference() {
+            // Body of the case
             translate(case_origin) {
                 difference() {
                     cube(case_size);
-                    translate([wall, wall, wall]) cube([case_size[0]-wall*2, case_size[1]-wall*2, case_size[2]-wall*2]);
+                    translate([wall, wall, wall]) cube([case_size[0]-wall*2, case_size[1]-wall*2, case_size[2]]);
+                    minkowski() {
+                        translate([0-extra, wall, case_size[2]-wall]) top_lid([case_size[0]-wall+extra, case_size[1]-wall*2]);
+                        sphere(r=0.1, $fn=20);
+                    }
                 }
             }
             
@@ -257,4 +281,4 @@ module traditional_tower_cooler() {
 }
 
 //traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
-traditional(show_internals = true, heatsink_type = "aio", psu_type = "sfx");
+traditional(show_body = true, show_lid = true, show_internals = false, heatsink_type = "aio", psu_type = "sfx");

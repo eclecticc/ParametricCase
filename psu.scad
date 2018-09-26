@@ -150,7 +150,7 @@ module flexatx_cutout(fan) {
     if (fan == true) {
         $fn = 50;
         
-        translate([-15, flexatx_size[1]-52.4, flexatx_size[2]/2]) rotate([0, 90, 0]) cylinder(r = 20, h = 30);
+        translate([-15, flexatx_size[1]-52.4, flexatx_size[2]/2]) rotate([0, 90, 0]) cylinder(r = 19, h = 30);
     }
 }
 
