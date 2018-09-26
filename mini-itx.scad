@@ -40,6 +40,16 @@ module psu_ledge() {
     }
 }
 
+module psu_corner_ledge() {
+    cube_size = 25;
+    translate([-extra, -extra, 0]) difference() {
+        translate([-cube_size/5, -cube_size/5, 0]) rotate([0, 0, -45]) rotate([45, 0, 0]) cube([cube_size, cube_size, cube_size], true);
+        translate([-cube_size*1.1, -cube_size*1.1, 0]) cube([cube_size*2, cube_size*2, cube_size*2]);
+        translate([-cube_size*2, -cube_size*1.1, -cube_size]) cube([cube_size*2, cube_size*2, cube_size*2]);
+        translate([-cube_size*1.1, -cube_size*2, -cube_size]) cube([cube_size*2, cube_size*2, cube_size*2]);
+    }
+}
+
 // The tab that the pci bracket screws into
 module pci_bracket_holder() {
     $fn = 20;
@@ -77,11 +87,14 @@ module back_to_back() {
 
 module traditional(show_internals, heatsink_type, psu_type) {
     // Airflow clearance for CPU fan
-    cpu_fan_clearance = 10;
+    cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
     case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
+    
+    m2_size = [110, 22+10];
+    m2_location = [miniitx[0]/2, 30]; // TODO: Measure this
     
     case_fan_size = 120;
     case_fan_thickness = 25;
@@ -100,7 +113,7 @@ module traditional(show_internals, heatsink_type, psu_type) {
     
     psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
     case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
-    case_exhaust_fan_location = [wall, wall+40+case_exhaust_fan_size/2, case_exhaust_fan_size+20];
+    case_exhaust_fan_location = [wall, case_size[1]-psu_size[1]-case_exhaust_fan_size/2-wall, case_size[2]-case_exhaust_fan_size/2-wall];
     
     // Calculate the case size in liters
     case_volume = case_size[0]*case_size[1]*case_size[2]/1000000.0;
@@ -146,7 +159,7 @@ module traditional(show_internals, heatsink_type, psu_type) {
     }
     
     // The actual case
-    color("WhiteSmoke", 0.3) {
+    color("WhiteSmoke", 0.5) {
         // Motherboard standoffs taking threaded inserts
         translate([0, 0, -miniitx_bottom_keepout]) {
             motherboard_standoffs_miniitx();  
@@ -157,30 +170,18 @@ module traditional(show_internals, heatsink_type, psu_type) {
             pci_bracket_holder();
         }
         
-        // Attach a ledge to the wall to help hold up the PSU
+        // Attach ledgees to the walls to help hold up the PSU
         translate(psu_location) {
             translate([psu_size[0], psu_size[1], 0]) psu_ledge();
+            translate([0, psu_size[1], 0]) rotate([0, 0, -90]) psu_corner_ledge();
         }
         
         difference() {
             translate(case_origin) {
-                 // Back wall
-                cube([wall, case_size[1], case_size[2]]);
-                
-                // Bottom wall
-                cube([case_size[0], case_size[1], wall]);
-                
-                // Right wall
-                translate([0, case_size[1]-wall, 0]) cube([case_size[0], wall, case_size[2]]);
-                
-                // Left wall
-                cube([case_size[0], wall, case_size[2]]);
-                
-                // Top wall
-                translate([0, 0, case_size[2]-wall]) cube([case_size[0], case_size[1], wall]);
-                
-                // Front wall
-                translate([case_size[0]-wall, 0, 0]) cube([wall, case_size[1], case_size[2]]);
+                difference() {
+                    cube(case_size);
+                    translate([wall, wall, wall]) cube([case_size[0]-wall*2, case_size[1]-wall*2, case_size[2]-wall*2]);
+                }
             }
             
             translate(case_origin) {
@@ -192,6 +193,9 @@ module traditional(show_internals, heatsink_type, psu_type) {
             }
                       
             motherboard_back_panel_cutout();
+            
+            // Put a vent in the bottom for a typical M.2 SSD location.
+            translate([m2_location[0], m2_location[1], case_origin[2]]) vent_rectangular(m2_size, 10, 2.0);
             
             // Put in a vent for the radiator for AIO cooling
             if (heatsink_type == "aio") {
@@ -215,8 +219,8 @@ module traditional(show_internals, heatsink_type, psu_type) {
                 }
                 
                 // Put in a vent on the back wall to improve airflow
-                back_panel_vent = [case_size[2]-motherboard_back_panel_size[1]-wall*2, case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
-                translate(psu_location) translate([0, -back_panel_vent[1]/2, sfx_size[2]-back_panel_vent[0]/2-wall]) {
+                back_panel_vent = [case_size[2]-motherboard_back_panel_size[1]-wall, case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
+                translate(psu_location) translate([0, -back_panel_vent[1]/2+wall, sfx_size[2]-back_panel_vent[0]/2]) {
                     rotate([0, 90, 0]) vent_rectangular(back_panel_vent, 10, 2.0);
                 }
             } else {
@@ -254,4 +258,3 @@ module traditional_tower_cooler() {
 
 //traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
 traditional(show_internals = true, heatsink_type = "aio", psu_type = "sfx");
-
