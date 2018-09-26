@@ -80,7 +80,7 @@ module top_lid(size) {
     cube([size[0], size[1], wall]);
     translate([0, 0, wall/2]) rotate([45, 0, 0]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
     translate([0, size[1], wall/2]) rotate([45, 0, 0]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
-    translate([size[0], 0, wall/2]) rotate([45, 0, 90]) translate([0, -wall/4, -wall/4]) cube([size[0], wall/2, wall/2]);
+    translate([size[0], 0, wall/2]) rotate([45, 0, 90]) translate([0, -wall/4, -wall/4]) cube([size[1], wall/2, wall/2]);
 }
 
 module back_to_back() {
