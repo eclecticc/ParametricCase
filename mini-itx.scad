@@ -109,7 +109,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     m2_size = [110, 22+10];
     m2_location = [miniitx[0]/2, 40];  // Note that this should be adjusted to match the mobo used
     
-    case_fan_size = 120;
+    case_fan_size = 140;
     case_fan_thickness = 25;
     case_exhaust_fan_size = 80;
     case_exhaust_fan_thickness = 15;
@@ -243,11 +243,17 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                     sfx_cutout();
                 }
                 
-                // Put in a vent on the back wall to improve airflow
-                back_panel_vent = [case_size[2]-motherboard_back_panel_size[1]-wall, case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
-                translate(psu_location) translate([0, -back_panel_vent[1]/2+wall, sfx_size[2]-back_panel_vent[0]/2]) {
-                    rotate([0, 90, 0]) vent_rectangular(back_panel_vent, 10, 2.0);
+                // Put in vents on the back wall to improve airflow
+                back_panel_vent_v = [sfx_size[2], case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
+                translate(psu_location) translate([0, -back_panel_vent_v[1]/2+wall, back_panel_vent_v[0]/2-wall]) {
+                    rotate([0, 90, 0]) vent_rectangular(back_panel_vent_v, 10, 2.0);
                 }
+                
+                back_panel_vent_h = [case_size[2]-sfx_size[2]-wall*3-motherboard_back_panel_size[1]-miniitx_bottom_keepout, case_size[1]-zotac_1080_thickness-wall*2];
+                translate(psu_location) translate([0, sfx_size[1]-back_panel_vent_h[1]/2+wall, -back_panel_vent_h[0]/2]) {
+                    rotate([0, 90, 0]) vent_rectangular(back_panel_vent_h, 10, 2.0);
+                }
+                
             } else {
                 translate(psu_location) {
                     flexatx_cutout(true);
@@ -281,5 +287,5 @@ module traditional_tower_cooler() {
     }
 }
 
-//traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
-traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
+traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
+//traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
