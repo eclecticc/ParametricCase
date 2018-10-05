@@ -36,7 +36,7 @@ module dual_gpu_cutout() {
 }
 
 zotac_1080_mini_pcb = [172.48, 110];
-zotac_1080_thickness = 40.41;
+zotac_1080_thickness = 41.9;
 zotac_1080_mini_length = 35.32+zotac_1080_mini_pcb[0]; // TODO: Needs measurement
 zotac_1080_front_fan = 100;
 zotac_1080_back_fan = 90;

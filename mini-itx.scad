@@ -8,7 +8,7 @@ include <gpu.scad>;
 include <motherboard.scad>;
 
 // Uxcell M3 threaded inserts from Amazon
-insert_r = 5.3/2;
+insert_r = 5.3/2+0.1;
 insert_h = 5.0;
 
 module motherboard_standoff() {
@@ -102,11 +102,12 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
+    // FIXME: gpu thickness doesn't account for bracket width
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
     case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
     
     m2_size = [110, 22+10];
-    m2_location = [miniitx[0]/2, 30]; // TODO: Measure this
+    m2_location = [miniitx[0]/2, 40];  // Note that this should be adjusted to match the mobo used
     
     case_fan_size = 120;
     case_fan_thickness = 25;
@@ -123,7 +124,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     
     case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
     
-    psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
+    psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall-wall/4, case_origin[2]+case_size[2]-psu_size[2]-wall];
     case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
     case_exhaust_fan_location = [wall, case_size[1]-psu_size[1]-case_exhaust_fan_size/2-wall, case_size[2]-case_exhaust_fan_size/2-wall];
     
@@ -135,7 +136,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     
     // Using the bottom corner of the motherboard near the GPU as the origin
     if (show_internals == true) {
-        motherboard_miniitx(false, am4_holes, am4_socket);
+        motherboard_miniitx(true, am4_holes, am4_socket);
         
         translate([am4_holes[0], am4_holes[1], am4_socket[2]+miniitx[2]]) {
             heatsink_type(heatsink_type);
@@ -189,7 +190,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
             pci_bracket_holder();
         }
         
-        // Attach ledgees to the walls to help hold up the PSU
+        // Attach ledges to the walls to help hold up the PSU
         translate(psu_location) {
             translate([psu_size[0], psu_size[1], 0]) psu_ledge();
             translate([0, psu_size[1], 0]) rotate([0, 0, -90]) psu_corner_ledge();
@@ -280,5 +281,5 @@ module traditional_tower_cooler() {
     }
 }
 
-//traditional(show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
-traditional(show_body = true, show_lid = true, show_internals = false, heatsink_type = "aio", psu_type = "sfx");
+//traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "flexatx");
+traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
