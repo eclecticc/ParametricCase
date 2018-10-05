@@ -14,7 +14,7 @@ module iec() {
 }
 
 sfx_size = [100, 125, 63.5];
-sfx_hole = 3.3;
+sfx_hole = 3.5+0.2; // #6-32 screw
 sfx_holes = [[6.0, 6.0+113.0], [6.0, 6.0+25.7, 6.0+51.5]];
 
 module sfx() {
@@ -99,7 +99,7 @@ module sfx_cutout() {
 }
 
 flexatx_size = [150, 81.5, 40];
-flexatx_hole = 3.3;
+flexatx_hole = 3.5+0.2; // #6-32 screw
 flexatx_hole_a = [81.5-75.9, 4.1];
 flexatx_hole_b = [81.5-75.9, 4.1+31.5];
 flexatx_hole_c = [81.5-15.2, 36.5];
