@@ -52,7 +52,6 @@ module psu_corner_ledge() {
 
 // The tab that the pci bracket screws into
 module pci_bracket_holder() {
-    $fn = 20;
     tab_depth = 11.43;
     
     bottom_wall = 1.0;
@@ -63,15 +62,24 @@ module pci_bracket_holder() {
             translate([pci_bracket_back_edge, -pci_e_spacing+pci_bracket_right_edge-pci_bracket_slot_extra, -tab_depth]) cube([tab_depth, pci_e_spacing+pci_bracket_total_width+pci_bracket_slot_extra*2-2.54, tab_depth]);
             // Chop it at 45 degrees to make it printable
             translate([pci_bracket_back_edge+tab_depth, -pci_e_spacing+pci_bracket_right_edge-pci_bracket_slot_extra-extra/2, -tab_depth]) rotate([0, -45-90, 0]) cube([tab_depth*2, pci_e_spacing+pci_bracket_total_width+pci_bracket_slot_extra*2-2.54+extra, tab_depth]);
-            // Cut out the holes for the threaded insert and the bolt
-            translate([0, 0, -insert_h]) {
-                cylinder(r = insert_r - 0.1, h = insert_h+extra);
-                translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
-            }
-            translate([0, -pci_e_spacing, -insert_h]) {
-                cylinder(r = insert_r - 0.1, h = insert_h+extra);
-                translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
-            }
+        }
+    }
+}
+
+module pci_bracket_holder_cutout() {
+    $fn = 20;
+    
+    bottom_wall = 1.0;
+    
+    translate(pci_e_to_bracket) {
+        // Cut out the holes for the threaded insert and the bolt
+        translate([0, 0, -insert_h]) {
+            cylinder(r = insert_r - 0.1, h = insert_h+extra);
+            translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
+        }
+        translate([0, -pci_e_spacing, -insert_h]) {
+            cylinder(r = insert_r - 0.1, h = insert_h+extra);
+            translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
         }
     }
 }
@@ -102,6 +110,8 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
+    // Extra neight for cable clearance for 8-pin connectors on the top of the card
+    gpu_power_height = 5;
     // FIXME: gpu thickness doesn't account for bracket width
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
     case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
@@ -116,7 +126,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     
     // Figure out the stacked heights of the tallest components to use for case height
     psu_heatsink_stack = -case_origin[2]+miniitx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
-    gpu_stack = -case_origin[2]+wall+pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1];
+    gpu_stack = -case_origin[2]+wall+pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1]+gpu_power_height;
     
     // Figure out the stacked lengths of the longest components to use for case length
     miniitx_cooling_length = -motherboard_back_edge+wall*3+miniitx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
@@ -187,7 +197,10 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
         
         // Part that the GPU screws into
         translate(gpu_location) {
-            pci_bracket_holder();
+            difference() {
+                pci_bracket_holder();
+                pci_bracket_holder_cutout();
+            }
         }
         
         // Attach ledges to the walls to help hold up the PSU
@@ -268,6 +281,15 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
             
             translate(gpu_location) {
                 zotac_1080_mini_cutout();
+                pci_bracket_holder_cutout();
+            }
+            
+            // Prevent corner lift by angling the bottom corners
+            translate(case_origin) {
+                rotate([0, 0, -45]) rotate([45, 0, 0]) cube([wall*3, wall*2, wall*2], center = true);
+                translate([case_size[0], 0, 0]) rotate([0, 0, 45]) rotate([45, 0, 0]) cube([wall*3, wall*2, wall*2], center = true);
+                translate([case_size[0], case_size[1], 0]) rotate([0, 0, 135]) rotate([45, 0, 0]) cube([wall*3, wall*2, wall*2], center = true);
+                translate([0, case_size[1], 0]) rotate([0, 0, -135]) rotate([45, 0, 0]) cube([wall*3, wall*2, wall*2], center = true);
             }
         }
     }
@@ -287,5 +309,5 @@ module traditional_tower_cooler() {
     }
 }
 
-traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
+traditional(show_body = true, show_lid = false, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
 //traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
