@@ -6,6 +6,7 @@ include <psu.scad>;
 include <heatsink.scad>;
 include <gpu.scad>;
 include <motherboard.scad>;
+include <power_switch.scad>;
 
 // Uxcell M3 threaded inserts from Amazon
 insert_r = 5.3/2+0.1;
@@ -107,7 +108,7 @@ module back_to_back() {
 
 module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type) {
     // Airflow clearance for CPU fan
-    cpu_fan_clearance = 5;
+    cpu_fan_clearance = 10;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
     // Extra neight for cable clearance for 8-pin connectors on the top of the card
@@ -135,8 +136,11 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
     
     psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall-wall/4, case_origin[2]+case_size[2]-psu_size[2]-wall];
+    
     case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
     case_exhaust_fan_location = [wall, case_size[1]-psu_size[1]-case_exhaust_fan_size/2-wall, case_size[2]-case_exhaust_fan_size/2-wall];
+    
+    power_switch_location = [case_origin[0]+case_size[0], case_origin[1]+power_switch_r+wall*2, case_origin[2]+power_switch_r+wall*2];
     
     // Calculate the case size in liters
     case_volume = case_size[0]*case_size[1]*case_size[2]/1000000.0;
@@ -178,6 +182,10 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                     rotate([0, 90, 0]) fan(case_fan_size, case_fan_thickness, 10);
                 }
             }
+        }
+        
+        translate(power_switch_location) {
+            rotate([0, 90, 0]) power_switch();
         }
     }
     
@@ -282,6 +290,10 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
             translate(gpu_location) {
                 zotac_1080_mini_cutout();
                 pci_bracket_holder_cutout();
+            }
+            
+            translate(power_switch_location) {
+                rotate([0, 90, 0]) power_switch_cutout();
             }
             
             // Prevent corner lift by angling the bottom corners
