@@ -7,6 +7,7 @@ include <heatsink.scad>;
 include <gpu.scad>;
 include <motherboard.scad>;
 include <power_switch.scad>;
+include <front_panel.scad>;
 
 // Uxcell M3 threaded inserts from Amazon
 insert_r = 5.3/2+0.1;
@@ -48,6 +49,21 @@ module psu_corner_ledge() {
         translate([-cube_size*1.1, -cube_size*1.1, 0]) cube([cube_size*2, cube_size*2, cube_size*2]);
         translate([-cube_size*2, -cube_size*1.1, -cube_size]) cube([cube_size*2, cube_size*2, cube_size*2]);
         translate([-cube_size*1.1, -cube_size*2, -cube_size]) cube([cube_size*2, cube_size*2, cube_size*2]);
+    }
+}
+
+module cable_wrap_holder() {
+    wrap_width = 15;
+    
+    difference () {
+        translate([wall, -wall-wrap_width/2, 0]) {
+            cube([wall, wall*2+wrap_width, wall*2]);
+            translate([-wall*1.5, 0, 0]) cube([wall*2, wall, wall*2]);
+            translate([-wall*1.5, wall+wrap_width, 0]) cube([wall*2, wall, wall*2]);
+            translate([wall, 0, 0]) rotate([0, -45-90, 0]) cube([wall*2, wall, wall*4]);
+            translate([wall, wall+wrap_width, 0]) rotate([0, -45-90, 0]) cube([wall*2, wall, wall*4]);
+        }
+        translate([-wall/2-10, -wall-wrap_width, -10]) cube([10, wrap_width*2+wall*2, 20]);
     }
 }
 
@@ -108,7 +124,7 @@ module back_to_back() {
 
 module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type) {
     // Airflow clearance for CPU fan
-    cpu_fan_clearance = 10;
+    cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
     // Extra neight for cable clearance for 8-pin connectors on the top of the card
@@ -118,7 +134,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
     
     m2_size = [110, 22+10];
-    m2_location = [miniitx[0]/2, 40];  // Note that this should be adjusted to match the mobo used
+    m2_location = [miniitx[0]/2, 30];  // Note that this should be adjusted to match the mobo used
     
     case_fan_size = 140;
     case_fan_thickness = 25;
@@ -137,10 +153,13 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     
     psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall-wall/4, case_origin[2]+case_size[2]-psu_size[2]-wall];
     
+    cable_wrap_location = [psu_location[0] + psu_size[0] + (case_size[0] - psu_size[0])/3, case_origin[1]+case_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
+    
     case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
     case_exhaust_fan_location = [wall, case_size[1]-psu_size[1]-case_exhaust_fan_size/2-wall, case_size[2]-case_exhaust_fan_size/2-wall];
     
     power_switch_location = [case_origin[0]+case_size[0], case_origin[1]+power_switch_r+wall*2, case_origin[2]+power_switch_r+wall*2];
+    dual_usb_location = [case_origin[0]+case_size[0]-wall, case_origin[1]+case_size[1]-wall-dual_usb_size[2]-0.5, case_origin[2]+case_size[2]/2];
     
     // Calculate the case size in liters
     case_volume = case_size[0]*case_size[1]*case_size[2]/1000000.0;
@@ -187,6 +206,10 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
         translate(power_switch_location) {
             rotate([0, 90, 0]) power_switch();
         }
+        
+        translate(dual_usb_location) {
+               rotate([-90, 0, 0]) rotate([0, 0, 90]) dual_usb();
+        }
     }
     
     // Make the lid separately so it can be printed on its own
@@ -217,6 +240,14 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
             translate([0, psu_size[1], 0]) rotate([0, 0, -90]) psu_corner_ledge();
         }
         
+        // Put some cable wrap holders on the wall near the PSU
+        translate(cable_wrap_location) {
+            rotate([0, 0, -90]) {
+                cable_wrap_holder();
+                translate([0, 0, psu_size[2]-wall*4]) cable_wrap_holder();
+            }
+        }
+        
         difference() {
             // Body of the case
             translate(case_origin) {
@@ -225,7 +256,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                     translate([wall, wall, wall]) cube([case_size[0]-wall*2, case_size[1]-wall*2, case_size[2]]);
                     minkowski() {
                         translate([0-extra, wall, case_size[2]-wall]) top_lid([case_size[0]-wall+extra, case_size[1]-wall*2]);
-                        sphere(r=0.1, $fn=20);
+                        cube([0.2, 0.2, 0.2], center = true);
                     }
                 }
             }
@@ -265,7 +296,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                 }
                 
                 // Put in vents on the back wall to improve airflow
-                back_panel_vent_v = [sfx_size[2], case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*2];
+                back_panel_vent_v = [sfx_size[2], case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*3];
                 translate(psu_location) translate([0, -back_panel_vent_v[1]/2+wall, back_panel_vent_v[0]/2-wall]) {
                     rotate([0, 90, 0]) vent_rectangular(back_panel_vent_v, 10, 2.0);
                 }
@@ -296,6 +327,10 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                 rotate([0, 90, 0]) power_switch_cutout();
             }
             
+            translate(dual_usb_location) {
+               rotate([-90, 0, 0]) rotate([0, 0, 90]) dual_usb_cutout();
+            }
+            
             // Prevent corner lift by angling the bottom corners
             translate(case_origin) {
                 rotate([0, 0, -45]) rotate([45, 0, 0]) cube([wall*3, wall*2, wall*2], center = true);
@@ -321,5 +356,5 @@ module traditional_tower_cooler() {
     }
 }
 
-traditional(show_body = true, show_lid = false, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
+traditional(show_body = false, show_lid = true, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
 //traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
