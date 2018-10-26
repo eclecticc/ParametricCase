@@ -55,7 +55,7 @@ module pci_bracket_cutout() {
     
     minkowski() {
         pci_bracket();
-        cube([pci_bracket_slot_extra*2, pci_bracket_slot_extra*2, pci_bracket_slot_extra*2], true);
+        cube([pci_bracket_slot_extra*2, pci_bracket_slot_extra*4, pci_bracket_slot_extra*2], true);
     }
 
     // I/O Cutout
