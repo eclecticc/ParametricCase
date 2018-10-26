@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// The main file with the case itself
+
 include <defaults.scad>;
 include <pci_bracket.scad>;
 include <fan.scad>;
@@ -356,5 +364,5 @@ module traditional_tower_cooler() {
     }
 }
 
-traditional(show_body = false, show_lid = true, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
+traditional(show_body = true, show_lid = false, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
 //traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx");
