@@ -37,7 +37,7 @@ module dual_gpu_cutout() {
 
 zotac_1080_mini_pcb = [172.48, 110];
 zotac_1080_thickness = 41.9;
-zotac_1080_mini_length = 35.32+zotac_1080_mini_pcb[0]; // TODO: Needs measurement
+zotac_1080_mini_length = 36+zotac_1080_mini_pcb[0]; // TODO: Needs measurement
 zotac_1080_front_fan = 100;
 zotac_1080_back_fan = 90;
 
@@ -72,9 +72,10 @@ module zotac_1080_mini_cutout() {
         }
     }
     
+    // Front panel cutout
     translate([pci_e_front_edge+zotac_1080_mini_length, -(zotac_1080_thickness-3)/2+wall, pci_e_cutout_height+zotac_1080_mini_pcb[1]/2]) {
         rotate([0, 90, 0]) {
-            vent_rectangular([zotac_1080_front_fan, zotac_1080_thickness-3], 10, 2.0);
+            vent_rectangular([zotac_1080_front_fan, zotac_1080_thickness], 10, 2.0);
         }
     }
 }
