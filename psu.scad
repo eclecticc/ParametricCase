@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// PC power supply modules
+
 include <defaults.scad>;
 include <fan.scad>;
 

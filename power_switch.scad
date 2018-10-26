@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// Power switch modules
+
 include <defaults.scad>;
 
 power_switch_r = 16/2;

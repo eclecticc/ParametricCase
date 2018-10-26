@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// PCI card bracket modules
+
 include <defaults.scad>
 
 pci_bracket_thickness = 0.86;

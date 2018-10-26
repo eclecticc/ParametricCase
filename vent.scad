@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// Parametric vent cutout modules
+
 module vent_rectangular(size, pitch, wall) {
     // Adjust the pitch to fit the total size
     fixed_pitch = size[0]/floor(size[0]/pitch);

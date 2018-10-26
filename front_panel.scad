@@ -1,3 +1,11 @@
+// Parametric Mini-ITX Case
+// https://github.com/eclecticc/ParametricCase
+//
+// BSD 2-Clause License
+// Copyright (c) 2018, Nirav Patel, http://eclecti.cc
+//
+// Front panel USB modules
+
 include <defaults.scad>;
 
 port_cutout = [15.1, 7.7];
