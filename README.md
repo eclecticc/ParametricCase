@@ -40,6 +40,8 @@ The default wall thickness with 20% infill should be more than stong enough, but
 I've found each case to require around 350-400g of filament, so be prepared for that.  You'll also want to make sure your
 printer is outputting dimensionally correct prints, otherwise you're going to have a challenging time with assembly.
 
+If you want the anti-vibration feet to actually anti-vibrate, you should print those with TPU or similar.
+
 ## Assembly
 I use 5mm diameter M3 brass threaded inserts rather than screwing directly into the plastic for the motherboard and GPU.
 Using a soldering iron with a blunt tip, you can heat press the insert into the plastic pretty easily.  Beyond that, you'll
