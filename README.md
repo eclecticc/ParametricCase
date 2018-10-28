@@ -57,4 +57,13 @@ threaded inserts, you can install the power supply and the GPU.
 I only have the traditional "shoebox" style architecture built out, but all of the building blocks are in place to easily
 build non-traditional case layouts.  You'll want to double check a lot of the dimensions though, especially around the GPU.
 
-I strongly suspect there are still bugs all around, especially on the PCI bracket.  Pull requests are welcome.
+# Known Issues
+Pull requests are welcome on any of these.
+ * The PCI bracket/gpu height is probably wrong, but I haven't dug into the math enough to figure out where.
+ * The top cover doesn't stay on well.  Realistically it should be screwed into place rather than slid in.
+ * Overall rigidity of the case is not awesome with 2.5mm walls in PLA.  Extra structure would probably improve it.
+
+## Feature Opportunities
+ * Currently only a traditional shoebox layout is present.  Alternate layouts would be great.
+ * There are a limited number of heatsink options currently.
+ * Alternative vent shapes would be helpful.
