@@ -166,7 +166,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     case_fan_location = [case_size[0]-wall-case_fan_thickness, (case_fan_size >= 120) ? case_size[1]/2-case_origin[1]/2 : case_size[1]/2, case_fan_size/2+wall*2];
     case_exhaust_fan_location = [wall, case_size[1]-psu_size[1]-case_exhaust_fan_size/2-wall, case_size[2]-case_exhaust_fan_size/2-wall];
     
-    power_switch_location = [case_origin[0]+case_size[0], case_origin[1]+power_switch_r+wall*2, case_origin[2]+power_switch_r+wall*2];
+    power_switch_location = [case_origin[0]+case_size[0], case_origin[1]+power_switch_r+wall*2.5, case_origin[2]+power_switch_r+wall*2.5];
     dual_usb_location = [case_origin[0]+case_size[0]-wall, case_origin[1]+case_size[1]-wall-dual_usb_size[2]-0.5, case_origin[2]+case_size[2]/2];
     
     // Calculate the case size in liters
