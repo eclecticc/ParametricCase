@@ -6,7 +6,7 @@ by Nirav Patel http://eclecti.cc
 ![Example Case](mini-itx.png)
 
 # License
-See LICENSE
+See [LICENSE](/LICENSE)
 
 # Instructions
 The case is fully built out in OpenSCAD, an open source parametric modeling tool http://www.openscad.org/
@@ -17,7 +17,7 @@ If you happen to own the same components as I do (Noctua NH-L12s, Zotac 1080 Min
 use the example stl files directly.
 
 ## Parameters to edit
-You'll need to choose the power supply type (psu_type of "sfx", "sfx-l", or "flexatx), the CPU heatsink
+In mini-itx.scad, you'll need to choose the power supply type (psu_type of "sfx", "sfx-l", or "flexatx), the CPU heatsink
 (heatsink_type of "aio", "noctua_nh_l12s", "noctua_nh_u9s", "cryorig_c7", or create your own), and probably measure
 your GPU if you don't happen to own the Zotac 1080 Mini like I do.
 
