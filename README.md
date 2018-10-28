@@ -1,5 +1,5 @@
 # Parametric Case
-A, open source 3D printable PC case that can fit your components exactly by adjusting a few parameters.
+An open source 3D printable PC case that can fit your components exactly by adjusting a few parameters.
 
 by Nirav Patel http://eclecti.cc
 
