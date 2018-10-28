@@ -3,6 +3,8 @@ A, open source 3D printable PC case that can fit your components exactly by adju
 
 by Nirav Patel http://eclecti.cc
 
+![Example Case](mini-itx.png)
+
 # License
 See LICENSE
 
