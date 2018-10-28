@@ -24,6 +24,9 @@ _hole_spacings=[
 
 function hole_spacing(size) = _hole_spacings[search([size], _hole_spacings, 1, 0)[0]][1];
 
+fan_screw_r = 4.4;
+fan_screw_head_r = 6.6;
+
 module fan(size, thickness, blades) {
     // Center at base of exhaust side is datum
     $fn = 50;
@@ -40,7 +43,7 @@ module fan(size, thickness, blades) {
             // Holes for the fan screws
             for (x = [-hole_spacing/2, hole_spacing/2]) {
                 for (y = [-hole_spacing/2, hole_spacing/2]) {
-                    translate([x, y, -extra/2]) cylinder(r = 4.0/2, h = thickness+extra);
+                    translate([x, y, -extra/2]) cylinder(r = fan_screw_r/2, h = thickness+extra);
                 }
             }
         }
@@ -67,10 +70,9 @@ module fan_cutout(size) {
     for (x = [-hole_spacing/2, hole_spacing/2]) {
         for (y = [-hole_spacing/2, hole_spacing/2]) {
             translate([x, y, 0]) {
-                // TODO: verify this dimensions
-                cylinder(r = 6.2/2, h = 15);
-                translate([0, 0, -1]) cylinder(r1 = 4.0/2, r2 = 6.2/2, h = 1);
-                translate([0, 0, -15]) cylinder(r = 4.0/2, h = 15);
+                cylinder(r = fan_screw_head_r/2, h = 15);
+                translate([0, 0, -1.2]) cylinder(r1 = fan_screw_r/2, r2 = fan_screw_head_r/2, h = 1.2);
+                translate([0, 0, -15]) cylinder(r = fan_screw_r/2, h = 15);
             }
         }
     }
