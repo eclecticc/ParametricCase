@@ -135,7 +135,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
-    // Extra neight for cable clearance for 8-pin connectors on the top of the card
+    // Extra height for cable clearance for 8-pin connectors on the top of the card
     gpu_power_height = 5;
     // FIXME: gpu thickness doesn't account for bracket width
     gpu_location = [pci_e_offset[0], pci_e_offset[1], pci_e_offset[2]+miniitx[2]];
