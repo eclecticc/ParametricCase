@@ -139,7 +139,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     gpu_power_height = 5;
     // FIXME: gpu thickness doesn't account for bracket width
     gpu_location = [miniitx_pci_e_offset[0], miniitx_pci_e_offset[1], miniitx_pci_e_offset[2]+miniitx[2]];
-    case_origin = [motherboard_back_edge-wall, -zotac_1080_thickness-wall+miniitx_pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
+    case_origin = [miniitx_motherboard_back_edge-wall, -zotac_1080_thickness-wall+miniitx_pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
 
     m2_size = [110, 22+10];
     m2_location = [miniitx[0]/2, 30];  // Note that this should be adjusted to match the mobo used
@@ -154,12 +154,12 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     gpu_stack = -case_origin[2]+wall+miniitx_pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1]+gpu_power_height;
 
     // Figure out the stacked lengths of the longest components to use for case length
-    miniitx_cooling_length = -motherboard_back_edge+wall*3+miniitx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
+    miniitx_cooling_length = -miniitx_motherboard_back_edge+wall*3+miniitx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
     gpu_length = zotac_1080_mini_length+wall*3; // Note the extra wall length for assembly margin
 
-    case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
+    case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+miniitx_motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
 
-    psu_location = [motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall-wall/4, case_origin[2]+case_size[2]-psu_size[2]-wall];
+    psu_location = [miniitx_motherboard_back_edge, case_origin[1]+case_size[1]-psu_size[1]-wall-wall/4, case_origin[2]+case_size[2]-psu_size[2]-wall];
 
     cable_wrap_location = [psu_location[0] + psu_size[0] + (case_size[0] - psu_size[0])/3, case_origin[1]+case_size[1]-wall, case_origin[2]+case_size[2]-psu_size[2]-wall];
 

@@ -85,15 +85,16 @@ module motherboard_miniitx(show_keepouts, socket_holes, socket) {
     }
 }
 
-motherboard_back_edge = miniitx_hole_c[0]-12.27;
-motherboard_back_panel_overhang = 158.75+7.52+6.35-miniitx[1];
+miniitx_motherboard_back_edge = miniitx_hole_c[0]-12.27;
+// value for the conncetor I/O, sticking over the edge of the board
+miniitx_motherboard_back_panel_overhang = 158.75+7.52+6.35-miniitx[1];
 motherboard_back_panel_lip = 2.54;
 motherboard_back_panel_size = [158.75, 44.45];
 
 module motherboard_back_panel_cutout() {
     // Cut-out for the back panel i/o
-    translate([-extra/2+motherboard_back_edge-wall, miniitx_hole_c[1]+7.52, -2.24]) {
-        cube([extra/2+wall+motherboard_back_edge+39, motherboard_back_panel_size[0], motherboard_back_panel_size[1]]);
+    translate([-extra/2+miniitx_motherboard_back_edge-wall, miniitx_hole_c[1]+7.52, -2.24]) {
+        cube([extra/2+wall+miniitx_motherboard_back_edge+39, motherboard_back_panel_size[0], motherboard_back_panel_size[1]]);
         // Thin a 2.54mm area around the i/o down to a typical sheet metal thickness
         translate([0, -motherboard_back_panel_lip, -motherboard_back_panel_lip]) cube([extra/2+wall-1.2, 158.75+motherboard_back_panel_lip*2, 44.45+motherboard_back_panel_lip*2]);
     }
