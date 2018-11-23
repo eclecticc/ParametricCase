@@ -32,9 +32,9 @@ module motherboard_standoffs_microatx() {
     $fn = 50;
 
     // Mounting holes for the motherboard
-    translate([microatx_hole_a[0], microatx_hole_a[1], 0]) {
+    translate([microatx_hole_b[0], microatx_hole_b[1], 0]) {
         motherboard_standoff();
-        for (hole = [microatx_hole_b, microatx_hole_c, microatx_hole_d, microatx_hole_e, microatx_hole_f, microatx_hole_g, microatx_hole_h, microatx_hole_i]) {
+        for (hole = [microatx_hole_c, microatx_hole_d, microatx_hole_e, microatx_hole_f, microatx_hole_g, microatx_hole_h, microatx_hole_i, microatx_hole_j]) {
             translate([hole[0], hole[1], 0]) motherboard_standoff();
         }
     }

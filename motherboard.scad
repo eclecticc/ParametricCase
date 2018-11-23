@@ -112,15 +112,15 @@ microatx_am4_holes = [80, 95+70, 54, 90]; // Center not measured
 //microatx_am4_socket = [40, 40, 7.35]; // Not measured
 
 // Motherboard mounting hold diameter and offsets (relative to hole a)
-microatx_hole_a = [10.16, 34.29];
-microatx_hole_b = [0, 45.72];
-microatx_hole_c = [22.86, 203.3];
-microatx_hole_d = [154.94, -20.32];
-microatx_hole_e = [154.94, 0];
-microatx_hole_f = [154.94, 45.72];
-microatx_hole_g = [154.94, 203.3];
-microatx_hole_h = [227.33, 45.72 ];
-microatx_hole_i = [227.33, 203.3];
+microatx_hole_b = [10.16, 34.29];
+microatx_hole_c = [0, 45.72];
+microatx_hole_d = [22.86, 203.3];
+microatx_hole_e = [154.94, -20.32];
+microatx_hole_f = [154.94, 0];
+microatx_hole_g = [154.94, 45.72];
+microatx_hole_h = [154.94, 203.3];
+microatx_hole_i = [227.33, 45.72 ];
+microatx_hole_j = [227.33, 203.3];
 
 // Keepouts on top and bottom of board
 microatx_bottom_keepout = 0.25 * 25.4;
@@ -149,9 +149,9 @@ module motherboard_microatx(show_keepouts, socket_holes, socket) {
         }
 
         // Mounting holes for the motherboard
-        translate([microatx_hole_a[0], microatx_hole_a[1], -extra/2]) {
+        translate([microatx_hole_b[0], microatx_hole_b[1], -extra/2]) {
             cylinder(r = mounting_hole/2, h = microatx[2]+extra);
-            for (hole = [microatx_hole_b, microatx_hole_c, microatx_hole_d, microatx_hole_e, microatx_hole_f, microatx_hole_g, microatx_hole_h, microatx_hole_i]) {
+            for (hole = [microatx_hole_c, microatx_hole_d, microatx_hole_e, microatx_hole_f, microatx_hole_g, microatx_hole_h, microatx_hole_i, microatx_hole_j]) {
                 translate([hole[0], hole[1], 0]) cylinder(r = mounting_hole/2, h = miniitx[2]+extra);
            }
         }
