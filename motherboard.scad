@@ -190,6 +190,19 @@ module motherboard_microatx(show_keepouts, socket_holes, socket) {
     /*     } */
     /* } */
 }
+
+microatx_motherboard_back_edge = microatx_hole_b[0]-12.27;
+microatx_motherboard_back_panel_overhang = 34.29+53.24+158.75-microatx[1]; // 172.62-170
+
+module motherboard_microatx_back_panel_cutout() {
+    // Cut-out for the back panel i/o
+    translate([-extra/2+microatx_motherboard_back_edge-wall, microatx_hole_b[1] + 53.5, -2.24]) {
+        cube([extra/2+wall+microatx_motherboard_back_edge+39, motherboard_back_panel_size[0], motherboard_back_panel_size[1]]);
+        // Thin a 2.54mm area around the i/o down to a typical sheet metal thickness
+        translate([0, -motherboard_back_panel_lip, -motherboard_back_panel_lip]) cube([extra/2+wall-1.2, 158.75+motherboard_back_panel_lip*2, 44.45+motherboard_back_panel_lip*2]);
+    }
+}
+
 //---------------
 
 /* union() { */
@@ -200,5 +213,6 @@ module motherboard_microatx(show_keepouts, socket_holes, socket) {
 /* union() { */
 /*     translate([0, -250, 0]) { */
 /*         motherboard_microatx(true, microatx_am4_holes, am4_socket); */
+/*         //motherboard_microatx_back_panel_cutout(); */
 /*     } */
 /* } */
