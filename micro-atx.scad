@@ -177,9 +177,9 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
 
     // Using the bottom corner of the motherboard near the GPU as the origin
     if (show_internals == true) {
-        motherboard_microatx(true, am4_holes, am4_socket);
+        motherboard_microatx(true, microatx_am4_holes, am4_socket);
 
-        translate([am4_holes[0], am4_holes[1], am4_socket[2]+microatx[2]]) {
+        translate([microatx_am4_holes[0], microatx_am4_holes[1], am4_socket[2]+microatx[2]]) {
             heatsink_type(heatsink_type);
         }
 

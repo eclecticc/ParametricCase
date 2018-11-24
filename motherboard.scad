@@ -109,7 +109,7 @@ microatx = [244, 244, pcb_thickness];
 microatx_pci_e_offset = [46.94+10.16, 80, 114.55-111.15];
 
 // AM4 Socket specs
-microatx_am4_holes = [80, 95+70, 54, 90]; // Center not measured
+microatx_am4_holes = [80+20, 95+70, 54, 90]; // Center not measured
 //microatx_am4_socket = [40, 40, 7.35]; // Not measured
 
 // Motherboard mounting hold diameter and offsets (relative to hole a)
