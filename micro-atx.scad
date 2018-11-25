@@ -125,7 +125,7 @@ module back_to_back() {
         rotate([-90, 0, 0]) flexatx();
     }
 
-    translate([microatx_pci_e_offset[0], microatx_pci_e_offset[1]+100, -40]) {
+    translate([microatx_pci_e_baseoffset[0], microatx_pci_e_baseoffset[1]+100, -40]) {
         rotate([90, 0, 0]) zotac_1080_mini();
     }
 }
@@ -138,8 +138,9 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
     // Extra height for cable clearance for 8-pin connectors on the top of the card
     gpu_power_height = 5;
     // FIXME: gpu thickness doesn't account for bracket width
-    gpu_location = [microatx_pci_e_offset[0], microatx_pci_e_offset[1], microatx_pci_e_offset[2]+microatx[2]];
-    case_origin = [microatx_motherboard_back_edge-wall, -zotac_1080_thickness-wall+microatx_pci_e_offset[1]+3, -microatx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
+    // @todo: use variable to position the cpu
+    gpu_location = microatx_pci_e_position_0;
+    case_origin = [microatx_motherboard_back_edge-wall, -zotac_1080_thickness-wall+microatx_pci_e_offset_3[1]+3, -microatx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
 
     m2_size = [110, 22+10];
     m2_location = [microatx[0]/2, 30];  // Note that this should be adjusted to match the mobo used
@@ -151,7 +152,7 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
 
     // Figure out the stacked heights of the tallest components to use for case height
     psu_heatsink_stack = -case_origin[2]+microatx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
-    gpu_stack = -case_origin[2]+wall+microatx_pci_e_offset[2]+microatx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1]+gpu_power_height;
+    gpu_stack = -case_origin[2]+wall+microatx_pci_e_offset_0[2]+microatx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1]+gpu_power_height;
 
     // Figure out the stacked lengths of the longest components to use for case length
     microatx_cooling_length = -microatx_motherboard_back_edge+wall*3+microatx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
@@ -359,7 +360,7 @@ module traditional_tower_cooler() {
         flexatx();
     }
 
-    translate([microatx_pci_e_offset[0], microatx_pci_e_offset[1], microatx_pci_e_offset[2]+microatx[2]]) {
+    translate([microatx_pci_e_offset_0[0], microatx_pci_e_offset_0[1], microatx_pci_e_offset_0[2]+microatx[2]]) {
         zotac_1080_mini();
     }
 }

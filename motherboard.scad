@@ -105,14 +105,7 @@ module motherboard_back_panel_cutout() {
 // ---------------
 microatx = [243.84, 243.84, pcb_thickness];
 
-//microatx_pci_e_offset = [46.94+10.16, 34.29+45.72, 114.55-111.15];
-microatx_pci_e_offset = [46.94+10.16, 80, 114.55-111.15];
-
-// AM4 Socket specs
-microatx_am4_holes = [80+20, 95+70, 54, 90]; // Center not measured
-//microatx_am4_socket = [40, 40, 7.35]; // Not measured
-
-// Motherboard mounting hold diameter and offsets (relative to hole a)
+// microATX Motherboard mounting hole offsets (relative to hole b)
 microatx_hole_b = [10.16, 34.29];
 microatx_hole_c = [0, 45.72];
 microatx_hole_d = [22.86, 203.3];
@@ -122,6 +115,23 @@ microatx_hole_g = [154.94, 45.72];
 microatx_hole_h = [154.94, 203.3];
 microatx_hole_i = [227.33, 45.72 ];
 microatx_hole_j = [227.33, 203.3];
+
+microatx_pci_e_baseoffset = [46.94+10.16, 80.01-18.75+20.23-(7.5/2), pcb_thickness];
+
+microatx_pci_e_offset_0 = [microatx_pci_e_baseoffset[0]-14.5, microatx_pci_e_baseoffset[1], microatx_pci_e_baseoffset[2]];
+microatx_pci_e_offset_1 = [microatx_pci_e_baseoffset[0]-14.5, microatx_pci_e_baseoffset[1]-20.32, microatx_pci_e_offset_0[2]];
+microatx_pci_e_offset_2 = [microatx_pci_e_baseoffset[0]-14.5, microatx_pci_e_baseoffset[1]-(2*20.32), microatx_pci_e_offset_1[2]];
+microatx_pci_e_offset_3 = [microatx_pci_e_baseoffset[0]-14.5, microatx_pci_e_baseoffset[1]-(3*20.32), microatx_pci_e_offset_2[2]];
+
+// positions to use for PCI_express card placement
+microatx_pci_e_position_0 = [microatx_pci_e_offset_0[0]+14.5, microatx_pci_e_offset_0[1]+(7.5/2), microatx[2]+pcb_thickness*2];
+microatx_pci_e_position_1 = [microatx_pci_e_offset_1[0]+14.5, microatx_pci_e_offset_1[1]+(7.5/2), microatx[2]+pcb_thickness*2];
+microatx_pci_e_position_2 = [microatx_pci_e_offset_2[0]+14.5, microatx_pci_e_offset_2[1]+(7.5/2), microatx[2]+pcb_thickness*2];
+microatx_pci_e_position_3 = [microatx_pci_e_offset_3[0]+14.5, microatx_pci_e_offset_3[1]+(7.5/2), microatx[2]+pcb_thickness*2];
+
+// AM4 Socket specs
+microatx_am4_holes = [80+20, 95+70, 54, 90]; // Center not measured
+microatx_am4_socket = [40, 40, 7.35]; // Not measured
 
 // Keepouts on top and bottom of board
 microatx_bottom_keepout = 0.25 * 25.4;
@@ -170,10 +180,10 @@ module motherboard_microatx(show_keepouts, socket_holes, socket) {
     // PCI-e slot
     union() {
         color("DarkSlateGray", 1.0) {
-            translate([microatx_pci_e_offset[0]-14.5, microatx_pci_e_offset[1]-7.5/2, microatx[2]]) cube([89.0, 7.5, 11.25]);
-            translate([microatx_pci_e_offset[0]-14.5, microatx_pci_e_offset[1]-7.5/2-20.32, microatx[2]]) cube([39.0, 7.5, 11.25]);
-            translate([microatx_pci_e_offset[0]-14.5, microatx_pci_e_offset[1]-7.5/2-20.32*2, microatx[2]]) cube([39.0, 7.5, 11.25]);
-            translate([microatx_pci_e_offset[0]-14.5, microatx_pci_e_offset[1]-7.5/2-20.32*3, microatx[2]]) cube([89.0, 7.5, 11.25]);
+            translate(microatx_pci_e_offset_0) cube([89.0, 7.5, 11.25]);
+            translate(microatx_pci_e_offset_1) cube([39.0, 7.5, 11.25]);
+            translate(microatx_pci_e_offset_2) cube([39.0, 7.5, 11.25]);
+            translate(microatx_pci_e_offset_3) cube([89.0, 7.5, 11.25]);
         }
     }
 
