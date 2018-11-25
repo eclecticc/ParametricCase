@@ -103,7 +103,7 @@ module motherboard_back_panel_cutout() {
 // ---------------
 // micro ATX stuff
 // ---------------
-microatx = [244, 244, pcb_thickness];
+microatx = [243.84, 243.84, pcb_thickness];
 
 //microatx_pci_e_offset = [46.94+10.16, 34.29+45.72, 114.55-111.15];
 microatx_pci_e_offset = [46.94+10.16, 80, 114.55-111.15];
