@@ -88,5 +88,58 @@ module zotac_1080_mini_cutout() {
     }
 }
 
-//zotac_1080_mini();
-//% zotac_1080_mini_cutout();
+
+
+accelero_970_pcb = [172.48, 110];
+accelero_970_thickness = 40;
+accelero_970_length = 36+accelero_970_pcb[0]; // TODO: Needs measurement
+accelero_970_height = accelero_970_pcb[1] + 50;
+accelero_970_depth = accelero_970_thickness + 20;
+
+accelero_970_main_fan = 120;
+
+module accelero_970() {
+    // Brackets and PCB
+    dual_gpu(accelero_970_pcb[0]);
+
+    fan_thickness = 20;
+
+    // Body
+    color("DimGray", 1.0) {
+        translate([pci_e_front_edge, -(accelero_970_thickness/2), pci_e_cutout_height]) {
+            union(){
+                //cube([accelero_970_length, accelero_970_thickness-fan_thickness, accelero_970_pcb[1]]);
+                translate([accelero_970_length-160, -accelero_970_thickness/2, 10]){
+                    cube([138, accelero_970_thickness, 136]);
+                }
+            }
+        }
+    }
+
+    // Add the fan
+    translate([pci_e_front_edge, -(accelero_970_thickness/2), pci_e_cutout_height+accelero_970_pcb[1]/2]) {
+        translate([accelero_970_length-90, -accelero_970_thickness, 20]) rotate([-90, 0, 0]) fan(accelero_970_main_fan, fan_thickness, 9);
+    }
+}
+
+module accelero_970_cutout() {
+    dual_gpu_cutout();
+
+    // Side panel fan cutouts
+    translate([pci_e_front_edge+(accelero_970_main_fan),
+               -(accelero_970_thickness)-40,
+               pci_e_cutout_height+accelero_970_pcb[1]/2 + 20]) {
+        rotate([90, 0, 0]) {
+            vent_rectangular([accelero_970_main_fan, accelero_970_main_fan], 10, 2.0);
+        }
+    }
+}
+
+
+// zotac_1080_mini();
+// %zotac_1080_mini_cutout();
+
+// translate ([300, 0, 0]){
+//     accelero_970();
+//     %accelero_970_cutout();
+// }
