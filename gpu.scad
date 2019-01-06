@@ -25,7 +25,7 @@ module dual_gpu(length) {
             translate([72.15, -pcb_thickness/2-extra/2, 0-extra]) cube([length-72.15+extra, pcb_thickness+extra, pci_e_cutout_height]);
         }
     }
-    
+
     translate(pci_e_to_bracket) {
         pci_bracket();
         translate([0, -pci_e_spacing, 0]) pci_bracket();
@@ -34,7 +34,7 @@ module dual_gpu(length) {
 
 module dual_gpu_cutout() {
     slot_extra = 0.1;
-    
+
     translate(pci_e_to_bracket) {
         pci_bracket_cutout();
         translate([0, -pci_e_spacing, 0]) pci_bracket_cutout();
@@ -52,19 +52,19 @@ zotac_1080_back_fan = 90;
 module zotac_1080_mini() {
     // Brackets and PCB
     dual_gpu(zotac_1080_mini_pcb[0]);
-    
+
     fan_thickness = 15;
-    
+
     // Body
     color("DimGray", 1.0) {
         translate([pci_e_front_edge, -(zotac_1080_thickness-3)+fan_thickness, pci_e_cutout_height]) {
             cube([zotac_1080_mini_length, zotac_1080_thickness-fan_thickness, zotac_1080_mini_pcb[1]]);
         }
     }
-    
+
     // Add the fans
     translate([pci_e_front_edge, -(zotac_1080_thickness-3), pci_e_cutout_height+zotac_1080_mini_pcb[1]/2]) {
-        
+
         translate([zotac_1080_back_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_back_fan, fan_thickness, 9);
         translate([zotac_1080_back_fan+zotac_1080_front_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_front_fan, fan_thickness, 8);
     }
@@ -72,14 +72,14 @@ module zotac_1080_mini() {
 
 module zotac_1080_mini_cutout() {
     dual_gpu_cutout();
-    
+
     // Side panel fan cutouts
     translate([pci_e_front_edge+(zotac_1080_back_fan+zotac_1080_front_fan)/2, -(zotac_1080_thickness-3), pci_e_cutout_height+zotac_1080_mini_pcb[1]/2]) {
         rotate([90, 0, 0]) {
             vent_rectangular([zotac_1080_back_fan+zotac_1080_front_fan, zotac_1080_front_fan], 10, 2.0);
         }
     }
-    
+
     // Front panel cutout
     translate([pci_e_front_edge+zotac_1080_mini_length, -(zotac_1080_thickness-3)/2+wall, pci_e_cutout_height+zotac_1080_mini_pcb[1]/2]) {
         rotate([0, 90, 0]) {
