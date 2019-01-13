@@ -131,7 +131,6 @@ module accelero_970() {
     color("DimGray", 1.0) {
         translate([pci_e_front_edge, -(accelero_970_thickness/2), pci_e_cutout_height]) {
             union(){
-                //cube([accelero_970_length, accelero_970_thickness-fan_thickness, accelero_970_pcb[1]]);
                 translate([accelero_970_length-160, -accelero_970_thickness/2, 10]){
                     cube([138, accelero_970_thickness, 136]);
                 }
@@ -149,9 +148,7 @@ module accelero_970_cutout() {
     dual_gpu_cutout();
 
     // Side panel fan cutouts
-    translate([pci_e_front_edge+(accelero_970_main_fan),
-               -(accelero_970_thickness)-40,
-               pci_e_cutout_height+accelero_970_pcb[1]/2 + 20]) {
+    translate([pci_e_front_edge+(accelero_970_main_fan), -(accelero_970_thickness)-40, pci_e_cutout_height+accelero_970_pcb[1]/2 + 20]) {
         rotate([90, 0, 0]) {
             vent_rectangular([accelero_970_main_fan, accelero_970_main_fan], 10, 2.0);
         }
