@@ -16,11 +16,11 @@ pci_e_spacing = 47.29-26.97;
 // Transform from pci e card datum to bracket datum
 pci_e_to_bracket = [-64.13, 2.84-pcb_thickness, 100.36];
 
-module dual_gpu(length) {
+module dual_gpu( length, height) {
     // Using the bottom center of the notch as the datum
     color("Green", 1.0) {
         difference() {
-            translate([pci_e_front_edge, -pcb_thickness/2, 0]) cube([length, pcb_thickness, 111.15]);
+            translate([pci_e_front_edge, -pcb_thickness/2, 0]) cube([length, pcb_thickness, height]);
             translate([pci_e_front_edge-extra, -pcb_thickness/2-extra/2, 0-extra]) cube([-pci_e_front_edge+extra-12.15, pcb_thickness+extra, pci_e_cutout_height]);
             translate([72.15, -pcb_thickness/2-extra/2, 0-extra]) cube([length-72.15+extra, pcb_thickness+extra, pci_e_cutout_height]);
         }
@@ -51,7 +51,7 @@ zotac_1080_back_fan = 90;
 
 module zotac_1080_mini() {
     // Brackets and PCB
-    dual_gpu(zotac_1080_mini_pcb[0]);
+    dual_gpu(zotac_1080_mini_pcb[0], 111.15);
 
     fan_thickness = 15;
 
@@ -89,7 +89,6 @@ module zotac_1080_mini_cutout() {
 }
 
 
-
 accelero_970_pcb = [172.48, 110];
 accelero_970_thickness = 40;
 accelero_970_length = 36+accelero_970_pcb[0]; // TODO: Needs measurement
@@ -100,7 +99,7 @@ accelero_970_main_fan = 120;
 
 module accelero_970() {
     // Brackets and PCB
-    dual_gpu(accelero_970_pcb[0]);
+    dual_gpu(accelero_970_pcb[0], 111.15);
 
     fan_thickness = 20;
 
