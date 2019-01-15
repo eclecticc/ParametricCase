@@ -130,16 +130,19 @@ module back_to_back() {
     }
 }
 
-module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type) {
+module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type, gpu_type) {
     // Airflow clearance for CPU fan
     cpu_fan_clearance = 5;
     heatsink_height = heatsink_height(heatsink_type);
     psu_size = psu_size(psu_type);
+
     // Extra height for cable clearance for 8-pin connectors on the top of the card
     gpu_power_height = 5;
+    gpu_size = gpu_size(gpu_type);
+
     // FIXME: gpu thickness doesn't account for bracket width
     gpu_location = [miniitx_pci_e_offset[0], miniitx_pci_e_offset[1], miniitx_pci_e_offset[2]+miniitx[2]];
-    case_origin = [miniitx_motherboard_back_edge-wall, -zotac_1080_thickness-wall+miniitx_pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
+    case_origin = [miniitx_motherboard_back_edge-wall, -gpu_size[2]-wall+miniitx_pci_e_offset[1]+3, -miniitx_bottom_keepout-wall]; // TODO: Clean up the Y calculation
 
     m2_size = [110, 22+10];
     m2_location = [miniitx[0]/2, 30];  // Note that this should be adjusted to match the mobo used
@@ -151,11 +154,11 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
 
     // Figure out the stacked heights of the tallest components to use for case height
     psu_heatsink_stack = -case_origin[2]+miniitx[2]+am4_socket[2]+heatsink_height+cpu_fan_clearance+psu_size[2]+wall;
-    gpu_stack = -case_origin[2]+wall+miniitx_pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+zotac_1080_mini_pcb[1]+gpu_power_height;
+    gpu_stack = -case_origin[2]+wall+miniitx_pci_e_offset[2]+miniitx[2]+pci_e_cutout_height+gpu_size[1]+gpu_power_height;
 
     // Figure out the stacked lengths of the longest components to use for case length
     miniitx_cooling_length = -miniitx_motherboard_back_edge+wall*3+miniitx[0]+(heatsink_type == "aio" ? corsair_h60_size[0] : case_fan_thickness);
-    gpu_length = zotac_1080_mini_length+wall*3; // Note the extra wall length for assembly margin
+    gpu_length = gpu_size[0]+wall*3; // Note the extra wall length for assembly margin
 
     case_size = [max(miniitx_cooling_length, gpu_length), miniitx[1]-case_origin[1]+miniitx_motherboard_back_panel_overhang+motherboard_back_panel_lip, max(psu_heatsink_stack, gpu_stack)];
 
@@ -194,7 +197,13 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
         }
 
         translate(gpu_location) {
-            zotac_1080_mini();
+            if ( gpu_type == "zotac_1080_mini" ) {
+                zotac_1080_mini();
+            } else if ( gpu_type == "accelero_970" ) {
+                accelero_970();
+            } else if (gpu_type == "gt730_1g" ) {
+                gt730_1G();
+            }
         }
 
         translate(case_origin)  {
@@ -304,15 +313,16 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
                 }
 
                 // Put in vents on the back wall to improve airflow
-                back_panel_vent_v = [sfx_size[2], case_size[1]-zotac_1080_thickness-sfx_size[1]-wall*3];
+                back_panel_vent_v = [sfx_size[2], case_size[1]-gpu_size[2]-sfx_size[1]-wall*3];
                 translate(psu_location) translate([0, -back_panel_vent_v[1]/2+wall, back_panel_vent_v[0]/2-wall]) {
                     rotate([0, 90, 0]) vent_rectangular(back_panel_vent_v, 10, 2.0);
                 }
 
-                back_panel_vent_h = [case_size[2]-sfx_size[2]-wall*3-motherboard_back_panel_size[1]-miniitx_bottom_keepout, case_size[1]-zotac_1080_thickness-wall*2];
+                back_panel_vent_h = [case_size[2]-sfx_size[2]-wall*3-motherboard_back_panel_size[1]-miniitx_bottom_keepout, case_size[1]-gpu_size[2]-wall*2];
                 translate(psu_location) translate([0, sfx_size[1]-back_panel_vent_h[1]/2+wall, -back_panel_vent_h[0]/2]) {
                     rotate([0, 90, 0]) vent_rectangular(back_panel_vent_h, 10, 2.0);
                 }
+
 
             } else {
                 translate(psu_location) {
@@ -327,10 +337,17 @@ module traditional(show_body, show_lid, show_internals, heatsink_type, psu_type)
             }
 
             translate(gpu_location) {
-                zotac_1080_mini_cutout();
+                if ( gpu_type == "zotac_1080_mini" ) {
+                    zotac_1080_mini_cutout();
+                } else if ( gpu_type == "accelero_970" ) {
+                    accelero_970_cutout();
+                } else if (gpu_type == "gt730_1g" ) {
+                    gt730_1G_cutout();
+                }
                 pci_bracket_holder_cutout();
             }
 
+            // @todo: this could use some positioning love, too
             translate(power_switch_location) {
                 rotate([0, 90, 0]) power_switch_cutout();
             }

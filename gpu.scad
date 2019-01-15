@@ -72,25 +72,28 @@ zotac_1080_thickness = 41.9;
 zotac_1080_mini_length = 36+zotac_1080_mini_pcb[0]; // TODO: Needs measurement
 zotac_1080_front_fan = 100;
 zotac_1080_back_fan = 90;
+zotac_1080_fan_thickness = 15;
+
+zotac_1080_mini_size = [zotac_1080_mini_length, zotac_1080_mini_pcb[1], zotac_1080_thickness];
 
 module zotac_1080_mini() {
     // Brackets and PCB
     dual_gpu(zotac_1080_mini_pcb[0], 111.15);
 
-    fan_thickness = 15;
+
 
     // Body
     color("DimGray", 1.0) {
-        translate([pci_e_front_edge, -(zotac_1080_thickness-3)+fan_thickness, pci_e_cutout_height]) {
-            cube([zotac_1080_mini_length, zotac_1080_thickness-fan_thickness, zotac_1080_mini_pcb[1]]);
+        translate([pci_e_front_edge, -(zotac_1080_thickness-3)+zotac_1080_fan_thickness, pci_e_cutout_height]) {
+            cube([zotac_1080_mini_length, zotac_1080_thickness-zotac_1080_fan_thickness, zotac_1080_mini_pcb[1]]);
         }
     }
 
     // Add the fans
     translate([pci_e_front_edge, -(zotac_1080_thickness-3), pci_e_cutout_height+zotac_1080_mini_pcb[1]/2]) {
 
-        translate([zotac_1080_back_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_back_fan, fan_thickness, 9);
-        translate([zotac_1080_back_fan+zotac_1080_front_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_front_fan, fan_thickness, 8);
+        translate([zotac_1080_back_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_back_fan, zotac_1080_fan_thickness, 9);
+        translate([zotac_1080_back_fan+zotac_1080_front_fan/2, 0, 0]) rotate([-90, 0, 0]) fan(zotac_1080_front_fan, zotac_1080_fan_thickness, 8);
     }
 }
 
@@ -112,20 +115,23 @@ module zotac_1080_mini_cutout() {
     }
 }
 
-
+//
 accelero_970_pcb = [172.48, 110];
 accelero_970_thickness = 40;
+accelero_970_main_fan = 120;
+accelero_fan_thickness = 20;
+
 accelero_970_length = 36+accelero_970_pcb[0]; // TODO: Needs measurement
 accelero_970_height = accelero_970_pcb[1] + 50;
-accelero_970_depth = accelero_970_thickness + 20;
+accelero_970_depth = accelero_970_thickness + accelero_fan_thickness + 5;
 
-accelero_970_main_fan = 120;
+accelero_970_size = [accelero_970_length, accelero_970_height, accelero_970_depth];
 
 module accelero_970() {
     // Brackets and PCB
     dual_gpu(accelero_970_pcb[0], 111.15);
 
-    fan_thickness = 20;
+
 
     // Body
     color("DimGray", 1.0) {
@@ -140,7 +146,7 @@ module accelero_970() {
 
     // Add the fan
     translate([pci_e_front_edge, -(accelero_970_thickness/2), pci_e_cutout_height+accelero_970_pcb[1]/2]) {
-        translate([accelero_970_length-90, -accelero_970_thickness, 20]) rotate([-90, 0, 0]) fan(accelero_970_main_fan, fan_thickness, 9);
+        translate([accelero_970_length-90, -accelero_970_thickness, 20]) rotate([-90, 0, 0]) fan(accelero_970_main_fan, accelero_fan_thickness, 9);
     }
 }
 
@@ -160,13 +166,13 @@ gt730_1G_pcb = [114, 69];
 gt730_1G_thickness = 33;
 //gt730_1G_length = gt730_1G_pcb[0]; // TODO: Needs measurement
 //gt730_1G_height = gt730_1G_pcb[1];
-//gt730_1G_depth = gt730_1G_thickness + 20;
+gt730_1G_depth = gt730_1G_thickness + 5;
+
+gt730_1G_size = [gt730_1G_pcb[0], gt730_1G_pcb[1], gt730_1G_depth];
 
 module gt730_1G() {
     // Brackets and PCB
     single_bracket_gpu(gt730_1G_pcb[0], gt730_1G_pcb[1]);
-
-    fan_thickness = 20;
 
     // Body
     color("DimGray", 1.0) {
@@ -185,6 +191,18 @@ module gt730_1G_cutout() {
     dual_gpu_cutout();
     //single_bracket_gpu_cutout();
 }
+
+
+
+_gpus=[
+    ["zotac_1080_mini", zotac_1080_mini_size],
+    ["accelero_970", accelero_970_size],
+    //["gt730_1g", [gt730_1G_pcb[0], gt730_1G_pcb[1], gt730_1G_thickness+5]],
+    ["gt730_1g", gt730_1G_size],
+    ];
+
+// Return the height of the GPU by name
+function gpu_size(gpu) = _gpus[search([gpu], _gpus, 1, 0)[0]][1];
 
 /************ place for testing the elements above ****************/
 
