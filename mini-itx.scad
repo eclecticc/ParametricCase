@@ -381,5 +381,5 @@ module traditional_tower_cooler() {
     }
 }
 
-traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
-//traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx_l");
+traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "noctua_nh_l12s", psu_type = "sfx", gpu_type = "zotac_1080_mini");
+//traditional(show_body = true, show_lid = false, show_internals = true, heatsink_type = "aio", psu_type = "sfx_l", gpu_type = "gt730_1g");
