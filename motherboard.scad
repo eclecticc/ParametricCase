@@ -49,7 +49,7 @@ module motherboard_miniitx(show_keepouts, socket_holes, socket) {
         }
 
         // Mounting holes for the motherboard
-        #translate([miniitx_hole_c[0], miniitx_hole_c[1], -extra/2]) {
+        translate([miniitx_hole_c[0], miniitx_hole_c[1], -extra/2]) {
             cylinder(r = mounting_hole/2, h = miniitx[2]+extra);
             for (hole = [miniitx_hole_f, miniitx_hole_h, miniitx_hole_j]) {
                 translate([hole[0], hole[1], 0]) cylinder(r = mounting_hole/2, h = miniitx[2]+extra);
@@ -72,17 +72,18 @@ module motherboard_miniitx(show_keepouts, socket_holes, socket) {
     }
 
     // Keepouts for visualization purposes
-    color("GreenYellow", 0.25) {
-        if (show_keepouts == true) {
-            translate([0, 0, -miniitx_bottom_keepout]) cube([miniitx[0], miniitx[1], miniitx_bottom_keepout]);
+    /* color("GreenYellow", 0.25) { */
+    /*     if (show_keepouts == true) { */
+    /*         translate([0, 0, -miniitx_bottom_keepout]) cube([miniitx[0], miniitx[1], miniitx_bottom_keepout]); */
 
-            for (keepout = [area_a_keepout, area_b_keepout, area_c_keepout, area_d_keepout]) {
-                translate([keepout[0], keepout[1], miniitx[2]]) {
-                    cube([keepout[2], keepout[3], keepout[4]]);
-                }
-            }
-        }
-    }
+    /*         for (keepout = [area_a_keepout, area_b_keepout, area_c_keepout, area_d_keepout]) { */
+    /*             translate([keepout[0], keepout[1], miniitx[2]]) { */
+    /*                 cube([keepout[2], keepout[3], keepout[4]]); */
+    /*             } */
+    /*         } */
+    /*     } */
+    /* } */
+
 }
 
 miniitx_motherboard_back_edge = miniitx_hole_c[0]-12.27;
