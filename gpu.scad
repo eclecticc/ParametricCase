@@ -47,6 +47,22 @@ module single_bracket_gpu( length, height) {
     }
 }
 
+module quad_gpu_cutout() {
+    slot_extra = 0.1;
+
+    translate(pci_e_to_bracket) {
+        pci_bracket_cutout();
+        translate([0, -pci_e_spacing, 0]) pci_bracket_cutout();
+        translate([0, -pci_e_spacing*2, 0]) pci_bracket_cutout();
+        translate([0, -pci_e_spacing*3, 0]) pci_bracket_cutout();
+        // Handle the gap between the two brackets, typically one piece on dual slot GPUs
+        /* translate([-(11.43-5.08), -pci_e_spacing, 0]) cube([11.43, pci_e_spacing, 40]); */
+        /* translate([-(11.43-5.08), -pci_e_spacing*2, 0]) cube([11.43, pci_e_spacing, 40]); */
+        /* translate([-(11.43-5.08), -pci_e_spacing*3, 0]) cube([11.43, pci_e_spacing, 40]); */
+    }
+
+}
+
 module dual_gpu_cutout() {
     slot_extra = 0.1;
 
