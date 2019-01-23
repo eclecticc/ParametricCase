@@ -98,13 +98,11 @@ module pci_bracket_holder_cutout() {
 
     translate(pci_e_to_bracket) {
         // Cut out the holes for the threaded insert and the bolt
-        translate([0, 0, -insert_h]) {
-            cylinder(r = insert_r - 0.1, h = insert_h+extra);
-            translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
-        }
-        translate([0, -pci_e_spacing, -insert_h]) {
-            cylinder(r = insert_r - 0.1, h = insert_h+extra);
-            translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
+        for( i = [ 0, 1, 2, 3]) {
+            translate([0, -pci_e_spacing*i, -insert_h]) {
+                cylinder(r = insert_r - 0.1, h = insert_h+extra);
+                translate([0, 0, -bottom_wall-extra/2]) cylinder(r = 1.5, h = bottom_wall+extra);
+            }
         }
     }
 }
