@@ -17,11 +17,13 @@ If you happen to own the same components as I do (Noctua NH-L12s, Zotac 1080 Min
 use the example stl files directly.
 
 ## Parameters to edit
-In mini-itx.scad, you'll need to choose the power supply type (psu_type of "sfx", "sfx-l", or "flexatx), the CPU heatsink
-(heatsink_type of "aio", "noctua_nh_l12s", "noctua_nh_u9s", "cryorig_c7", or create your own), and probably measure
-your GPU if you don't happen to own the Zotac 1080 Mini like I do.
+In mini-itx.scad, you'll need to choose
+ * the power supply type (psu_type) from: "sfx", "sfx-l", or "flexatx
+ * the CPU heatsink (heatsink_type) from: "aio", "noctua_nh_l12s", "noctua_nh_u9s", "cryorig_c7", "bequiet_shadowrock_lp", or create your own),
+ * your GPU (gpu_type) from: "zotac_1080_mini", "accelero_970", or "gt730_1g"
+If you don't happen to own any of the parts mentioned before,  you probably need to measure and input your own.
 
-    traditional(show_body = true, show_lid = false, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx");
+    traditional(show_body = true, show_lid = false, show_internals = false, heatsink_type = "noctua_nh_l12s", psu_type = "sfx", gpu_type = "zotac_1080_mini");
 
 Beyond that, there are a range of optional items you can adjust.
  * The front fan with case_fan_size and case_fan_thickness
@@ -29,7 +31,7 @@ Beyond that, there are a range of optional items you can adjust.
  * Extra clearance for your gpu power plug if needed with gpu_power_height
  * Airflow clearance for your heatsink if you want more than the default 5mm with cpu_fan_clearance
  * Thickness of all walls with wall in defaults.scad
- 
+
 ## Printing
 You'll need to print the body and the lid one at a time.  Note that the case is likely going to push up to or past
 the size limits of many consumer 3d printers.  I've been printing them pretty successfully on a Prusa i3 MK3.
